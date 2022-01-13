@@ -1,0 +1,111 @@
+.container {
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  font-family: sans-serif;
+  color: #fff;
+  font-size: 1rem;
+
+  a {
+    color: #dede44;
+
+    &:hover {
+      color: #dede22;
+    }
+  }
+
+  canvas {
+    image-rendering: auto;
+  }
+
+  button {
+    appearance: none;
+    padding: 0.5rem;
+    border: 0;
+    background: #fff;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+  }
+ 
+
+  .hidden {
+    opacity: 0;
+  }
+
+  .actions,
+  .controls {
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+    opacity: 0.2;
+    position: fixed;
+    background-color: transparent;
+    display: flex;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+
+    &:hover {
+      opacity: 1;
+      background-color: rgba(0,0,0,0.5)
+    }
+  }
+
+  .actions {
+    bottom: 0;
+    text-align: center;
+    flex-direction: column;
+
+    p {
+      margin: 1rem 0;
+      padding: 0 1rem;
+      font-size: 0.8rem;
+      
+      &:last-child  {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .controls {
+    top: 0;
+    flex-direction: row;
+
+    &__title {
+      text-align: center;
+      width: 100%;
+      margin-top: 0.5rem;
+
+      small {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .control {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin: 0.5rem;
+    width: auto;
+
+    &__label {
+      margin-bottom: 0.2rem;
+      width: 100%;
+    }
+
+    &__input {
+      width: 100%;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    &__value {
+      font-weight: bold;
+    }
+  }
+}
