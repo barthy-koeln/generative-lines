@@ -1,17 +1,27 @@
 ---
-
+import '../root.scss'
+import '@fontsource/ubuntu/latin-400.css'
+import '@fontsource/ubuntu/latin-700.css'
+import MLinesCanvas from '../components/molecules/MLinesCanvas.astro'
+import TPage from '../components/templates/TPage.astro'
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<head>
+  <meta charset="utf-8"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="icon" href="/favicon.ico"/>
+  <meta name="viewport" content="width=device-width"/>
+  <meta name="generator" content={Astro.generator}/>
+  <title>Astro</title>
+</head>
+<body>
+<TPage>
+  <h1>Astro</h1>
+
+  <MLinesCanvas/>
+</TPage>
+
+<script src="../main.ts"/>
+</body>
 </html>
