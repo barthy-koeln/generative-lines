@@ -1,0 +1,40 @@
+---
+import OFooter from '../organisms/OFooter.astro'
+
+---
+
+<div class="TPage">
+  <main>
+    <slot/>
+  </main>
+
+  <OFooter/>
+</div>
+
+<style lang="scss">
+  @use "../../variables" as *;
+
+  .TPage {
+    min-height: 100vh;
+
+    main {
+      align-items: center;
+      color: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: auto;
+      max-width: var(--bp-desktop);
+      padding: 4rem 1rem;
+      width: 100%;
+
+      @include desktop {
+        padding: 4rem 0;
+      }
+
+      @media print {
+        padding: var(--spacer-lg);
+      }
+    }
+  }
+</style>

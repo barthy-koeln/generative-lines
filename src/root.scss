@@ -1,0 +1,162 @@
+@use "variables" as *;
+
+:root {
+  --color-white: #dedede;
+  --color-black: #181818;
+  --color-background: #333;
+  --color-full: #cc7832;
+  --color-light: #eab868;
+  --color-accent: #9876aa;
+  --color-accent-dark: rgb(151 118 171 / 50%);
+  --anim-duration: 0.35s;
+  --anim-easing: cubic-bezier(0.25, 0.87, 0.58, 1);
+  --spacer-xs: 0.2rem;
+  --spacer-sm: 0.5rem;
+  --spacer: 1rem;
+  --spacer-md: 1.5rem;
+  --spacer-lg: 2rem;
+  --spacer-xl: 5rem;
+  --radius: 0.313rem;
+  --fontsize-1: 1.8rem;
+  --fontsize-2: 1.5rem;
+  --fontsize-3: 1.2rem;
+  --fontsize-4: 1rem;
+
+  @each $name, $value in $breakpoints {
+    --bp-#{$name}: #{$value};
+  }
+
+  --font-sans: ubuntu;
+}
+
+@media print {
+  :root {
+    --fontsize-1: 18pt;
+    --fontsize-2: 15pt;
+    --fontsize-3: 12pt;
+    --fontsize-4: 10pt;
+    --spacer: 10pt;
+    --spacer-md: 12pt;
+    --spacer-lg: 18pt;
+    --spacer-xl: 26pt;
+  }
+}
+
+@media (prefers-reduced-motion) {
+  :root {
+    --anim-duration: 0;
+  }
+}
+
+*,
+*::before,
+*::after {
+  background: transparent;
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+html {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  scroll-behavior: smooth;
+  scroll-padding: var(--spacer-lg);
+}
+
+body {
+  background: var(--color-background);
+  font-size: var(--fontsize-4);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  padding: 0;
+  text-rendering: optimizelegibility;
+}
+
+@page {
+  margin: 0;
+  size: a4;
+}
+
+
+h1 {
+  font-size: var(--fontsize-1);
+}
+
+h2 {
+  font-size: var(--fontsize-2);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--fontsize-3);
+}
+
+p {
+  line-height: 1.4;
+  max-width: 84ch;
+}
+
+hr {
+  background: currentcolor;
+  height: 1px;
+  opacity: 0.5;
+  width: 100%;
+}
+
+blockquote {
+  border-left: 2px solid var(--color-accent);
+  font-style: italic;
+  max-width: 512px;
+  padding-block: var(--spacer-sm);
+  padding-inline-start: var(--spacer-md);
+}
+
+mark {
+  background-color: var(--color-light);
+  color: var(--color-black);
+  padding: 0.2em;
+}
+
+i {
+  color: var(--color-accent);
+  font-style: normal;
+}
+
+a {
+  color: var(--color-light);
+  cursor: url("/icons/hand-pointer-duotone.svg") 16 4, pointer;
+  text-underline-offset: 3px;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+  }
+
+  &[target="_blank"] {
+    cursor: url("/icons/external-link-square-duotone.svg") 16 16, pointer;
+  }
+}
+
+ul {
+  padding-inline-start: var(--spacer-lg);
+
+  li {
+    padding-block: var(--spacer-xs);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--anim-duration) var(--anim-easing);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
