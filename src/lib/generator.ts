@@ -8,7 +8,7 @@ import type { EasingFunction, Line } from './types'
  * @param steps - The total number of steps to generate between each pair of points.
  * @param easingFunction - The easing function to apply to the y-axis config
  */
-function getEasedCurvePoints(points: Line, pixelsPerStep: number, steps: number, easingFunction: EasingFunction): Line {
+function getEasedCurvePoints (points: Line, pixelsPerStep: number, steps: number, easingFunction: EasingFunction): Line {
   const renderPoints: Line = []
 
   for (let index = 0; index < points.length - 1; index++) {
@@ -29,8 +29,7 @@ function getEasedCurvePoints(points: Line, pixelsPerStep: number, steps: number,
   return renderPoints
 }
 
-
-export function createLines(
+export function createLines (
   config: Config,
   state: RenderState,
   width: number,

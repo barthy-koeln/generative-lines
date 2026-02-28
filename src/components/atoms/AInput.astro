@@ -1,0 +1,39 @@
+---
+import type { FormField } from '../../lib/form.ts'
+
+export type Props = FormField & astroHTML.JSX.InputHTMLAttributes & {
+  type: astroHTML.JSX.HTMLInputTypeAttribute
+}
+
+const {
+  label,
+  name,
+  type,
+  placeholder,
+  required,
+  value,
+  ...rest
+} = Astro.props
+---
+
+<input
+  type={type}
+  id={name}
+  name={name}
+  placeholder={placeholder}
+  required={required}
+  value={value}
+  class="AInput"
+  {...rest}
+/>
+
+<style>
+  .AInput {
+    display: block;
+    width: 100%;
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+</style>

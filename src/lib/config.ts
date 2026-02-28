@@ -49,7 +49,7 @@ export interface RawConfig {
   animationEasing: string
 }
 
-function getEasingByString(easing: string): EasingFunction {
+function getEasingByString (easing: string): EasingFunction {
   const [type, method] = easing.split('.')
   const easingFunction = (Easing as any)[type]?.[method] as EasingFunction | undefined
 
@@ -60,7 +60,7 @@ function getEasingByString(easing: string): EasingFunction {
   return easingFunction
 }
 
-export function resolveConfig(raw: RawConfig): Config {
+export function resolveConfig (raw: RawConfig): Config {
   return {
     renderWidth: raw.renderWidth,
     renderHeight: raw.renderHeight,
@@ -83,7 +83,7 @@ export function resolveConfig(raw: RawConfig): Config {
 /**
  * Resolves a single raw field into its Config-typed value.
  */
-export function resolveField<T extends keyof Config>(key: T, raw: Partial<RawConfig>): Config[T] {
+export function resolveField<T extends keyof Config> (key: T, raw: Partial<RawConfig>): Config[T] {
   if (key === 'easing' && typeof raw.easing === 'string') {
     return getEasingByString(raw.easing) as Config[T]
   }
@@ -100,7 +100,7 @@ export function resolveField<T extends keyof Config>(key: T, raw: Partial<RawCon
   return (raw as unknown as Config)[key]
 }
 
-export function createRenderState(config: Config): RenderState {
+export function createRenderState (config: Config): RenderState {
   return {
     steps: fillArray(config.steps, getRandomFloat),
     colors: fillArray(config.colors, getRandomColor),

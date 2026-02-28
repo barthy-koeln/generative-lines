@@ -36,7 +36,7 @@ export const ATTRIBUTE_TO_KEY: Map<string, keyof RawConfig> = new Map(
   ),
 )
 
-function getIntAttribute(element: HTMLElement, name: string, fallback: number): number {
+function getIntAttribute (element: HTMLElement, name: string, fallback: number): number {
   if (!element.hasAttribute(name)) {
     return fallback
   }
@@ -52,7 +52,7 @@ function getIntAttribute(element: HTMLElement, name: string, fallback: number): 
   return isNaN(parsedValue) ? fallback : parsedValue
 }
 
-function getFloatAttribute(element: HTMLElement, name: string, fallback: number): number {
+function getFloatAttribute (element: HTMLElement, name: string, fallback: number): number {
   if (!element.hasAttribute(name)) {
     return fallback
   }
@@ -68,7 +68,7 @@ function getFloatAttribute(element: HTMLElement, name: string, fallback: number)
   return isNaN(parsedValue) ? fallback : parsedValue
 }
 
-function getStringAttribute(element: HTMLElement, name: string, fallback: string): string {
+function getStringAttribute (element: HTMLElement, name: string, fallback: string): string {
   if (!element.hasAttribute(name)) {
     return fallback
   }
@@ -78,7 +78,7 @@ function getStringAttribute(element: HTMLElement, name: string, fallback: string
   return attributeValue === null ? fallback : attributeValue
 }
 
-function getAttributeByType(
+function getAttributeByType (
   element: HTMLElement,
   attribute: string,
   type: SchemaFieldType,
@@ -98,7 +98,7 @@ function getAttributeByType(
 /**
  * Parses all schema fields from element attributes into the raw config.
  */
-export function parseAllAttributes(
+export function parseAllAttributes (
   element: HTMLElement,
   fallback: RawConfig,
 ): RawConfig {
@@ -120,7 +120,7 @@ export function parseAllAttributes(
  * Parses a single attribute by its HTML attribute name into the raw config.
  * Returns the config key that was updated, or undefined if unknown.
  */
-export function parseSingleAttribute(
+export function parseSingleAttribute (
   element: HTMLElement,
   attributeName: string,
 ): Partial<Config> | null {

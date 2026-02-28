@@ -7,6 +7,7 @@ I wrote this to explore:
 * canvas drawing
 * generative art
 * web components
+* atomic design in Astro
 
 ## Using it
 

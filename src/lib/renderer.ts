@@ -1,6 +1,6 @@
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
 import { createLines } from './generator.ts'
-import type { Line, Milliseconds, Pixels } from './types'
+import type { Line, Milliseconds } from './types'
 import { Tween } from '@tweenjs/tween.js'
 import { createGradient } from './utils/colors.ts'
 import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
@@ -21,16 +21,17 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     context.clearRect(0, 0, canvas.width, canvas.height)
     context.fillRect(0, 0, canvas.width, canvas.height)
 
-    context.strokeStyle = createGradient(context, canvas.offsetWidth - (2 * config.paddingX), state.colors)
+    context.strokeStyle = createGradient(context, config.paddingX, config.renderWidth - (2 * config.paddingX), state.colors)
     context.lineWidth = config.thickness
     context.lineCap = 'square'
   }
 
   function _setClearingStyle () {
     context.fillStyle = config.background.hex()
+    context.strokeStyle = config.background.hex()
   }
 
-  function _createAnimateInTween(): Tween {
+  function _createAnimateInTween (): Tween {
     let previousStep: number = 0
 
     const tween: Tween = new Tween({ step: 0 })
@@ -46,7 +47,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       .onUpdate(({ step }: { step: number }) => {
         const quantizedStep = Math.floor(step)
         const stepsToRender = quantizedStep - previousStep
-        if (stepsToRender <= 0){
+        if (stepsToRender <= 0) {
           return
         }
 
@@ -57,7 +58,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     return tween
   }
 
-  function _createAnimateOutTween(){
+  function _createAnimateOutTween () {
     const tween = new Tween({ pixel: 0 })
       .to({ pixel: config.renderWidth })
       .duration(config.animationDuration)
@@ -73,8 +74,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     return tween
   }
 
-
-  function _draw(from: number, steps: number) {
+  function _draw (from: number, steps: number) {
     for (const points of lines) {
       context.beginPath()
       context.moveTo(points[from][0], points[from][1])
@@ -105,7 +105,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
 
   function animateOut (): Promise<void> {
     return new Promise((resolve) => {
-      const tween= _createAnimateOutTween()
+      const tween = _createAnimateOutTween()
       tweenGroup.removeAll()
       tweenGroup.add(tween)
 
@@ -135,11 +135,11 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateIn.start()
   }
 
-  function clear() {
+  function clear () {
     context.clearRect(0, 0, config.renderWidth, config.renderHeight)
   }
 
-  function redraw() {
+  function redraw () {
     _draw(0, lines[0].length)
   }
 
