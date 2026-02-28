@@ -13,7 +13,7 @@ export class LinesCanvas extends HTMLElement {
   renderer: ReturnType<typeof useRenderer>
   isMounted: boolean = false
 
-  constructor() {
+  constructor () {
     super()
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')!
@@ -28,7 +28,7 @@ export class LinesCanvas extends HTMLElement {
     this.insertAdjacentElement('afterbegin', this.canvas)
   }
 
-  connectedCallback() {
+  connectedCallback () {
     this.renderer.configure(parseAllAttributes(this, {
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight,
@@ -47,11 +47,24 @@ export class LinesCanvas extends HTMLElement {
       animationEasing: 'Cubic.InOut',
     }))
 
-    this.renderer.animateLoop()
     this.isMounted = true
+
+    const autoplay: string | null = this.getAttribute('autoplay')
+    if (!autoplay || autoplay == 'false') {
+      return
+    }
+
+    if (autoplay === 'loop') {
+      this.renderer.animateLoop()
+      return
+    }
+
+    this.renderer.animateIn().then(() => {
+      this.dispatchEvent(new CustomEvent('animated-in'))
+    })
   }
 
-  attributeChangedCallback(name: string, _oldValue: unknown, _newValue: unknown) {
+  attributeChangedCallback (name: string, _oldValue: unknown, _newValue: unknown) {
     if (!this.isMounted) {
       // Not mounted yet, skip
       return
@@ -64,6 +77,6 @@ export class LinesCanvas extends HTMLElement {
     }
 
     this.renderer.updateConfig(update)
-    this.renderer.animateIn()
+    this.renderer.animateLoop()
   }
 }

@@ -1,3 +1,3 @@
-import { registerElements } from './lib/register-elements.ts'
+import { LinesCanvas } from './lib/lines-canvas.ts'
 
-registerElements()
+customElements.define('lines-canvas', LinesCanvas);

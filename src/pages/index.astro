@@ -19,9 +19,32 @@ import TPage from '../components/templates/TPage.astro'
 <TPage>
   <h1>Astro</h1>
 
-  <MLinesCanvas/>
+  <lines-canvas
+    animation-duration="1000"
+    steps="8"
+    lines="24"
+    colors="3"
+    thickness="2"
+    easing="Bounce.InOut"
+    animation-easing="Quadratic.InOut"
+    distance="6"
+    amplitude="64"
+    perspective="0.01"
+    render-width="1024"
+    render-height="1024"
+    class="demo"
+    autoplay="loop"
+  />
 </TPage>
 
 <script src="../main.ts"/>
+<style>
+  .demo {
+    display: block;
+    height: 80vh;
+    width: auto;
+    aspect-ratio: 1;
+  }
+</style>
 </body>
 </html>
