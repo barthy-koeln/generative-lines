@@ -17,7 +17,7 @@ import TPage from '../components/templates/TPage.astro'
 </head>
 <body>
 <TPage>
-  <h1>Astro</h1>
+  <h1>Generative Lines</h1>
 
   <lines-canvas
     animation-duration="1000"
@@ -37,7 +37,12 @@ import TPage from '../components/templates/TPage.astro'
   />
 </TPage>
 
-<script src="../main.ts"/>
+<script>
+  import { LinesCanvas } from '../lib/lines-canvas.ts'
+
+  customElements.define('lines-canvas', LinesCanvas);
+</script>
+
 <style>
   .demo {
     display: block;

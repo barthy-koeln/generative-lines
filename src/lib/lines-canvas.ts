@@ -4,6 +4,11 @@ import {
   parseSingleAttribute,
 } from './config-schema.ts'
 import { useRenderer } from './renderer.ts'
+import type { RawConfig } from './config.ts'
+
+export interface LinesCanvasAttributes extends RawConfig {
+  autoplay?: 'true'|'false'|'loop'
+}
 
 export class LinesCanvas extends HTMLElement {
   static observedAttributes = [...ATTRIBUTE_TO_KEY.keys()]
