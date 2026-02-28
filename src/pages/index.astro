@@ -4,6 +4,7 @@ import '@fontsource/ubuntu/latin-400.css'
 import '@fontsource/ubuntu/latin-700.css'
 import MLinesCanvas from '../components/molecules/MLinesCanvas.astro'
 import TPage from '../components/templates/TPage.astro'
+import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 ---
 
 <html lang="en">
@@ -19,22 +20,24 @@ import TPage from '../components/templates/TPage.astro'
 <TPage>
   <h1>Generative Lines</h1>
 
-  <lines-canvas
-    animation-duration="1000"
-    steps="8"
-    lines="24"
-    colors="3"
-    thickness="2"
-    easing="Bounce.InOut"
-    animation-easing="Quadratic.InOut"
-    distance="6"
-    amplitude="64"
-    perspective="0.01"
-    render-width="1024"
-    render-height="1024"
-    class="demo"
-    autoplay="loop"
-  />
+  <OLineCanvasForm>
+    <lines-canvas
+      animation-duration="1000"
+      steps="8"
+      lines="24"
+      colors="3"
+      thickness="2"
+      easing="Bounce.InOut"
+      animation-easing="Quadratic.InOut"
+      distance="6"
+      amplitude="64"
+      perspective="0.01"
+      render-width="1024"
+      render-height="1024"
+      class="demo"
+      autoplay="loop"
+    />
+  </OLineCanvasForm>
 </TPage>
 
 <script>
