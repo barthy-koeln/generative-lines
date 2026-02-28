@@ -1,130 +1,149 @@
-import type { Color } from 'chroma-js'
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
 import { createLines } from './generator.ts'
 import type { Line, Milliseconds, Pixels } from './types'
+import { Tween } from '@tweenjs/tween.js'
+import { createGradient } from './utils/colors.ts'
+import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
 
-export function useRenderer(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-  let animation: ReturnType<typeof requestAnimationFrame>
+export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+  const tweenGroup = new AutoplayTweenGroup()
+
   let lines: Line[]
   let config: Config
   let state: RenderState
 
-  function createGradient(width: Pixels, colors: Color[]) {
-    const colorDistance = 1 / (colors.length - 1)
-    const gradient = context.createLinearGradient(0, 0, width, 0)
-
-    for (let i = 0; i < colors.length; i++) {
-      const color = colors[i]
-      const index = colors.indexOf(color)
-      gradient.addColorStop(index * colorDistance, color.hex())
-    }
-
-    return gradient
-  }
-
-  function rebuildLines() {
+  function rebuildLines () {
     lines = createLines(config, state, canvas.width, canvas.height)
   }
 
-  function animateIn(): Promise<void> {
-    cancelAnimationFrame(animation)
+  function _setDrawingStyle () {
     context.fillStyle = config.background.hex()
     context.clearRect(0, 0, canvas.width, canvas.height)
     context.fillRect(0, 0, canvas.width, canvas.height)
 
-    context.strokeStyle = createGradient(canvas.offsetWidth - (2 * config.paddingX), state.colors)
+    context.strokeStyle = createGradient(context, canvas.offsetWidth - (2 * config.paddingX), state.colors)
     context.lineWidth = config.thickness
     context.lineCap = 'square'
-
-    return new Promise((resolve) => {
-      const startTime = performance.now()
-      let currentStep = 0
-      const pointsPerLine = lines[0].length
-
-      function frame(timestamp: number) {
-        const elapsed = timestamp - startTime
-        const timeFactor = config.animationDuration === 0 ? 1 : config.animationEasing(elapsed / config.animationDuration)
-
-        const stepsToRender =
-          config.animationDuration === 0
-            ? pointsPerLine - 1
-            : Math.max(0, Math.min(
-              Math.floor(timeFactor * pointsPerLine) - currentStep,
-              pointsPerLine - currentStep - 2,
-            ))
-
-        if (stepsToRender > 0) {
-          for (const points of lines) {
-            context.beginPath()
-            context.moveTo(points[currentStep][0], points[currentStep][1])
-
-            const loopStart = currentStep + 1
-
-            for (let index = loopStart; index < loopStart + stepsToRender - 1; index++) {
-              const startPoint = points[index]
-              const targetPoint = points[index + 1]
-              context.quadraticCurveTo(startPoint[0], startPoint[1], targetPoint[0], targetPoint[1])
-            }
-
-            context.stroke()
-          }
-        }
-
-        currentStep += stepsToRender
-
-        if (currentStep >= pointsPerLine - 2) {
-          // All steps rendered
-          resolve()
-
-          return
-        }
-
-        animation = requestAnimationFrame(frame)
-      }
-
-      animation = requestAnimationFrame(frame)
-    })
   }
 
-  function animateOut(): Promise<void> {
-    cancelAnimationFrame(animation)
+  function _setClearingStyle () {
     context.fillStyle = config.background.hex()
+  }
 
-    return new Promise((resolve) => {
-      const startTime = performance.now()
+  function _createAnimateInTween(): Tween {
+    let previousStep: number = 0
 
-      function frame(timestamp: number) {
-        const elapsed = Math.max(0.0, timestamp - startTime)
-        const timeFactor = config.animationDuration === 0 ? 1 : config.animationEasing(elapsed / config.animationDuration)
-        const wipeWidth = timeFactor * canvas.width
+    const tween: Tween = new Tween({ step: 0 })
+      .to({ step: lines[0].length })
+      .duration(config.animationDuration)
+      .easing(config.animationEasing)
 
-        context.clearRect(0, 0, wipeWidth, canvas.height)
-        context.fillRect(0, 0, wipeWidth, canvas.height)
-
-        if (elapsed >= config.animationDuration) {
-          // Wipe complete
-          resolve()
-
+    tween
+      .onEveryStart(_setDrawingStyle)
+      .onComplete(() => {
+        previousStep = 0
+      })
+      .onUpdate(({ step }: { step: number }) => {
+        const quantizedStep = Math.floor(step)
+        const stepsToRender = quantizedStep - previousStep
+        if (stepsToRender <= 0){
           return
         }
 
-        animation = requestAnimationFrame(frame)
+        _draw(previousStep, stepsToRender)
+        previousStep = quantizedStep
+      })
+
+    return tween
+  }
+
+  function _createAnimateOutTween(){
+    const tween = new Tween({ pixel: 0 })
+      .to({ pixel: config.renderWidth })
+      .duration(config.animationDuration)
+      .easing(config.animationEasing)
+
+    tween
+      .onEveryStart(_setClearingStyle)
+      .onUpdate(({ pixel }: { pixel: number }) => {
+        context.clearRect(0, 0, pixel, canvas.height)
+        context.fillRect(0, 0, pixel, canvas.height)
+      })
+
+    return tween
+  }
+
+
+  function _draw(from: number, steps: number) {
+    for (const points of lines) {
+      context.beginPath()
+      context.moveTo(points[from][0], points[from][1])
+
+      const loopStart = from + 1
+      const loopEnd = Math.min(loopStart + steps - 1, points.length - 1)
+      for (let index = loopStart; index < loopEnd; index++) {
+        const startPoint = points[index]
+        const targetPoint = points[index + 1]
+        context.quadraticCurveTo(startPoint[0], startPoint[1], targetPoint[0], targetPoint[1])
       }
 
-      animation = requestAnimationFrame(frame)
+      context.stroke()
+    }
+  }
+
+  function animateIn (): Promise<void> {
+    return new Promise((resolve) => {
+      const tween = _createAnimateInTween()
+      tweenGroup.removeAll()
+      tweenGroup.add(tween)
+
+      tween
+        .onComplete(() => resolve())
+        .start()
     })
   }
 
-  async function animateLoop(holdAfterIn: Milliseconds = 1000, holdAfterOut: Milliseconds = 300) {
-    await animateIn()
-    await new Promise(resolve => setTimeout(resolve, holdAfterIn))
-    await animateOut()
-    await new Promise(resolve => setTimeout(resolve, holdAfterOut))
-    reroll()
-    return animateLoop(holdAfterIn, holdAfterOut)
+  function animateOut (): Promise<void> {
+    return new Promise((resolve) => {
+      const tween= _createAnimateOutTween()
+      tweenGroup.removeAll()
+      tweenGroup.add(tween)
+
+      tween
+        .onComplete(() => resolve())
+        .start()
+    })
   }
 
-  function configure(raw: RawConfig, existingState?: RenderState) {
+  function animateLoop (holdAfterIn: Milliseconds = 1000, holdAfterOut: Milliseconds = 300) {
+    const animateIn = _createAnimateInTween()
+    const animateOut = _createAnimateOutTween()
+    const animateInFollow = _createAnimateInTween()
+
+    animateIn
+      .chain(animateOut)
+    animateOut
+      .delay(holdAfterIn)
+      .chain(animateInFollow)
+    animateInFollow
+      .delay(holdAfterOut)
+      .chain(animateOut)
+
+    tweenGroup.removeAll()
+    tweenGroup.add(animateIn, animateOut, animateInFollow)
+
+    animateIn.start()
+  }
+
+  function clear() {
+    context.clearRect(0, 0, config.renderWidth, config.renderHeight)
+  }
+
+  function redraw() {
+    _draw(0, lines[0].length)
+  }
+
+  function configure (raw: RawConfig, existingState?: RenderState) {
     config = resolveConfig(raw)
 
     canvas.width = config.renderWidth
@@ -135,14 +154,14 @@ export function useRenderer(canvas: HTMLCanvasElement, context: CanvasRenderingC
     rebuildLines()
   }
 
-  function updateConfig(newConfig: Partial<Config>) {
+  function updateConfig (newConfig: Partial<Config>) {
     config = {
       ...config,
       ...newConfig,
     }
   }
 
-  function updateState(newState: Partial<RenderState>) {
+  function updateState (newState: Partial<RenderState>) {
     state = {
       ...state,
       ...newState,
@@ -150,30 +169,32 @@ export function useRenderer(canvas: HTMLCanvasElement, context: CanvasRenderingC
     rebuildLines()
   }
 
-  function reroll() {
+  function reroll () {
     state = createRenderState(config)
     rebuildLines()
   }
 
   return {
-    get config() {
+    get config () {
       return config
     },
-    set config(newConfig) {
+    set config (newConfig) {
       updateConfig(newConfig)
     },
-    get state() {
+    get state () {
       return state
     },
-    set state(newState) {
+    set state (newState) {
       updateState(newState)
     },
     configure,
+    animateIn,
+    animateOut,
+    animateLoop,
     updateConfig,
     updateState,
     reroll,
-    animateIn,
-    animateOut,
-    animateLoop
+    redraw,
+    clear,
   }
 }

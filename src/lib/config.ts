@@ -1,7 +1,7 @@
 import { Easing } from '@tweenjs/tween.js'
 import chroma, { type Color } from 'chroma-js'
-import { fillArray } from './array-utils.ts'
-import { getRandomColor, getRandomFloat } from './randomness-utils.ts'
+import { fillArray } from './utils/array.ts'
+import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
 import type { EasingFunction, Integer, Milliseconds, Normalized, Pixels } from './types'
 
 export interface Config {
@@ -105,12 +105,4 @@ export function createRenderState(config: Config): RenderState {
     steps: fillArray(config.steps, getRandomFloat),
     colors: fillArray(config.colors, getRandomColor),
   }
-}
-
-/**
- * Returns true if changing this field requires regenerating render state.
- */
-export function requiresNewState(key: keyof RawConfig): boolean {
-  // Changing count of steps or colors invalidates existing random data
-  return key === 'steps' || key === 'colors'
 }
