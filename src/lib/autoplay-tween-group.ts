@@ -1,6 +1,5 @@
 import { Group, Tween } from '@tweenjs/tween.js'
 
-
 export class AutoplayTweenGroup extends Group {
   private animationFrame: ReturnType<typeof requestAnimationFrame> | null = null
 
@@ -50,7 +49,7 @@ export class AutoplayTweenGroup extends Group {
     this.animationFrame = null
   }
 
-  queueFrame(){
+  queueFrame () {
     this.animationFrame = requestAnimationFrame(this.animate)
   }
 }

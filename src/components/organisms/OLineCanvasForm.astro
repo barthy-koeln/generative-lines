@@ -1,110 +1,186 @@
 ---
+import SFormField from '../structures/SFormField.astro'
+import ASliderFormField from '../atoms/ASliderFormField.astro'
+import ASelectFormField, { type SelectOption } from '../atoms/ASelectFormField.astro'
+import { Easing } from '@tweenjs/tween.js'
+
+const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, group]) => {
+  return [
+    ...Object.keys(group).map(option => ({
+      value: `${easing}.${option}`,
+      label: `${easing} | ${option}`
+    }))
+  ]
+})
 ---
 
 <div class="OLineCanvasForm">
-  <form class="OLineCanvasForm__form" id="lines-canvas-form">
-    <label for="renderWidth">Render Width:</label>
-    <input type="number" id="renderWidth" name="renderWidth"><br><br>
+  <form
+    class="form"
+    id="lines-canvas-form"
+  >
+    <ASliderFormField
+      min={0}
+      max={100}
+      step={1}
+      value={16}
+      label="Lines"
+      name="lines"
+      id="lines"
+    />
 
-    <label for="renderHeight">Render Height:</label>
-    <input type="number" id="renderHeight" name="renderHeight"><br><br>
+    <ASliderFormField
+      min={0}
+      max={100}
+      step={1}
+      value={16}
+      label="Distance"
+      name="distance"
+      id="distance"
+    />
 
-    <label for="distance">Distance:</label>
-    <input type="number" id="distance" name="distance"><br><br>
+    <ASliderFormField
+      min={0}
+      max={100}
+      step={1}
+      value={16}
+      label="Amplitude"
+      name="amplitude"
+      id="amplitude"
+    />
 
-    <label for="amplitude">Amplitude:</label>
-    <input type="number" id="amplitude" name="amplitude"><br><br>
+    <ASliderFormField
+      min={0}
+      max={100}
+      step={1}
+      value={2}
+      label="Thickness"
+      name="thickness"
+      id="thickness"
+    />
 
-    <label for="thickness">Thickness:</label>
-    <input type="number" id="thickness" name="thickness"><br><br>
+    <ASliderFormField
+      min={-0.1}
+      max={0.05}
+      step={0.01}
+      value={0.01}
+      label="Perspective"
+      name="perspective"
+      id="perspective"
+    />
 
-    <label for="lines">Lines:</label>
-    <input type="number" id="lines" name="lines"><br><br>
+    <ASliderFormField
+      min={0}
+      max={256}
+      step={1}
+      value={64}
+      label="Steps"
+      name="steps"
+      id="steps"
+    />
 
-    <label for="paddingX">Padding X:</label>
-    <input type="number" id="paddingX" name="paddingX"><br><br>
+    <ASliderFormField
+      min={0}
+      max={8}
+      step={1}
+      value={3}
+      label="Colors"
+      name="colors"
+      id="colors"
+    />
 
-    <label for="paddingY">Padding Y:</label>
-    <input type="number" id="paddingY" name="paddingY"><br><br>
-
-    <label for="perspective">Perspective:</label>
-    <input type="number" id="perspective" name="perspective"><br><br>
-
-    <label for="steps">Steps:</label>
-    <input type="number" id="steps" name="steps"><br><br>
-
-    <label for="colors">Colors:</label>
-    <input type="number" id="colors" name="colors"><br><br>
-
-    <label for="easing">Easing:</label>
-    <input type="text" id="easing" name="easing"><br><br>
+    <ASelectFormField
+      label="Lines Easing"
+      name="easing"
+      id="easing"
+      options={easingOptions}
+      value="Quadratic.InOut"
+    />
 
     <label for="background">Background:</label>
-    <input type="text" id="background" name="background"><br><br>
+    <input
+      type="color"
+      id="background"
+      name="background"
+      value="#181818"
+    >
 
-    <label for="animationDuration">Animation Duration:</label>
-    <input type="number" id="animationDuration" name="animationDuration"><br><br>
+    <hr>
 
-    <label for="animationEasing">Animation Easing:</label>
-    <input type="text" id="animationEasing" name="animationEasing"><br><br>
+    <ASliderFormField
+      min={0}
+      max={16_000}
+      step={500}
+      value={2_000}
+      label="Animation Duration (ms)"
+      name="animation-duration"
+      id="animation-duration"
+    />
 
-    <label for="autoplay">Autoplay:</label>
-    <select id="autoplay" name="autoplay">
-      <option value="true">True</option>
-      <option value="false">False</option>
-      <option value="loop">Loop</option>
-    </select><br><br>
-
-    <button type="submit">Update Lines Canvas</button>
+    <ASelectFormField
+      label="Animation Easing"
+      name="easing"
+      id="easing"
+      options={easingOptions}
+      value="Quadratic.InOut"
+    />
   </form>
 
-  <div class="OLineCanvasForm__preview">
+  <div class="preview">
     <slot/>
   </div>
 </div>
 
-<script lang="ts">
-  const form = document.getElementById<HTMLFormElement>('lines-canvas-form')
-  const linesCanvasElement = form.getElementsByTagName('lines-canvas')[0]
-  if (!form) {
+<script>
+  const wrapper = document.querySelector<HTMLFormElement>('.OLineCanvasForm')
+  const form = wrapper?.querySelector('form')
+  const linesCanvasElement = wrapper.querySelector('lines-canvas')
+  if (!wrapper) {
     throw new Error('Could not get form')
   }
 
-  if (!linesCanvasElement){
+  if (!linesCanvasElement) {
     throw new Error('Could not get lines-canvas element')
   }
 
-  form.addEventListener('submit', function (event) {
-    event.preventDefault()
+  form.addEventListener('change', function (event) {
+    const element = event.target
+    console.info({ event, element })
 
-    const formData = new FormData(form)
-    const linesCanvasAttributes = {}
-
-    for (let pair of formData.entries()) {
-      linesCanvasAttributes[pair[0]] = pair[1]
+    if (!element) {
+      throw new Error('Could not get form element')
     }
 
-    Object.assign(linesCanvasElement, linesCanvasAttributes)
+    if (!(element instanceof HTMLInputElement)) {
+      throw new Error('Event target is not a form element')
+    }
+
+    linesCanvasElement.setAttribute(element.name, element.value)
   })
+
+  const data = new FormData(form)
+  for (const [name, value] of data.entries()) {
+    linesCanvasElement.setAttribute(name, value)
+  }
 </script>
 
-<style lang="scss">
+<style>
   .OLineCanvasForm {
     display: flex;
     flex-direction: row;
     gap: var(--spacer-lg);
     width: 100%;
+  }
 
-    &__form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacer-md);
-      width: 30%;
-    }
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-md);
+    width: 30%;
+  }
 
-    &__preview {
-      width: 70%;
-      height: 100%;
-    }
+  .preview {
+    width: 70%;
+    height: 100%;
   }
 </style>

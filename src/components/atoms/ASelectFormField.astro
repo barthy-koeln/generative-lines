@@ -1,0 +1,50 @@
+---
+import SFormField from '../structures/SFormField.astro'
+import type { FormField } from '../../lib/form.ts'
+import AInput from './AInput.astro'
+
+export interface SelectOption {
+  value: string,
+  label: string
+}
+
+
+export interface Props extends FormField {
+  options: SelectOption[]
+}
+
+const {
+  label,
+  name,
+  required,
+  options,
+  value
+} = Astro.props
+---
+
+<SFormField
+  label={label}
+  name={name}
+  required={required}
+>
+  <select
+    id={name}
+    name={name}
+    value={value}
+  >
+    {options.map(option => (
+      <option value={option.value}>{option.label}</option>
+    ))}
+  </select>
+</SFormField>
+
+<style>
+  select {
+    display: block;
+    width: 100%;
+    border: 2px solid var(--color-white);
+    padding: var(--spacer-sm);
+    color: var(--color-white);
+    box-sizing: border-box;
+  }
+</style>

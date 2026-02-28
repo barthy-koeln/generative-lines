@@ -10,10 +10,23 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
-  <link rel="icon" href="/favicon.ico"/>
-  <meta name="viewport" content="width=device-width"/>
-  <meta name="generator" content={Astro.generator}/>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="/favicon.svg"
+  />
+  <link
+    rel="icon"
+    href="/favicon.ico"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width"
+  />
+  <meta
+    name="generator"
+    content={Astro.generator}
+  />
   <title>Astro</title>
 </head>
 <body>
@@ -43,7 +56,7 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
 
-  customElements.define('lines-canvas', LinesCanvas);
+    customElements.define('lines-canvas', LinesCanvas)
 </script>
 
 <style>

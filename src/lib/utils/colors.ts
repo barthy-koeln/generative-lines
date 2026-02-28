@@ -1,9 +1,9 @@
 import type { Pixels } from '../types'
 import type { Color } from 'chroma-js'
 
-export function createGradient (context: CanvasRenderingContext2D, width: Pixels, colors: Color[]) {
+export function createGradient (context: CanvasRenderingContext2D, start: Pixels, width: Pixels, colors: Color[]) {
   const colorDistance = 1 / (colors.length - 1)
-  const gradient = context.createLinearGradient(0, 0, width, 0)
+  const gradient = context.createLinearGradient(start, 0, width, 0)
 
   for (let i = 0; i < colors.length; i++) {
     const color = colors[i]

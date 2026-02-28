@@ -1,0 +1,76 @@
+---
+import SFormField from '../structures/SFormField.astro'
+import type { FormField } from '../../lib/form.ts'
+import AInput from './AInput.astro'
+
+export interface Props extends FormField {
+  min: number,
+  max: number,
+  step: number
+}
+
+const {
+  label,
+  name,
+  placeholder,
+  required,
+  min,
+  max,
+  step,
+  value
+} = Astro.props
+---
+
+<SFormField
+  label={label}
+  name={name}
+  required={required}
+  class="ASliderFormField"
+>
+  <div class="ASliderFormField__row">
+    <AInput
+      type="range"
+      id={name}
+      name={name}
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      placeholder={placeholder}
+    />
+
+    <span class="ASliderFormField__value">{value}</span>
+  </div>
+</SFormField>
+
+<script>
+  const wrappers = document.querySelectorAll('.ASliderFormField')
+
+  for (const wrapper of wrappers) {
+    const slider = wrapper.querySelector<HTMLInputElement>('input[type="range"]')
+    const valueDisplay = wrapper.querySelector<HTMLSpanElement>('.ASliderFormField__value')
+
+    function updateValue () {
+      valueDisplay.textContent = slider.value
+    }
+
+    slider.addEventListener('input', updateValue)
+    updateValue()
+  }
+</script>
+
+<style lang="scss">
+  .ASliderFormField {
+    &__row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-sm);
+    }
+
+    &__value {
+      font-size: var(--font-size-4);
+      min-width: 40px;
+      text-align: right;
+    }
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import type { FormFieldMinReq } from '../../lib/form.ts'
+export interface Props extends FormFieldMinReq {}
+
+const {
+  label,
+  name,
+  required,
+} = Astro.props
+---
+
+<div class="SFormField">
+  <label for={name}>{label}{required ? '*' : ''}</label>
+  <slot/>
+</div>
+
+<style lang="scss">
+  @use "../../variables" as *;
+
+  .SFormField {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .SFormField:has(select) {
+    gap: var(--spacer-sm);
+  }
+
+  label {
+    display: block;
+    font-size: var(--font-size-base);
+    margin: 0;
+    text-transform: capitalize;
+  }
+</style>

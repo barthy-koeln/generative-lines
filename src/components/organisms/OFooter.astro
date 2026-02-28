@@ -3,7 +3,7 @@
 ---
 
 <footer class="OFooter">
-  <p class="OFooter__hints">
+  <p class="hints">
     This website itself does not use cookies, tracking, logging or any other form of data storage.<br>
 
     <br>
@@ -11,7 +11,7 @@
     This website is hosted on servers operated by Hetzner Cloud GmbH in Germany.<br>
   </p>
 
-  <div class="OFooter__imprint">
+  <div class="imprint">
     <p>Barth&eacute;l&eacute;my Bonhomme</p>
 
     <p>post@barthy.koeln</p>
@@ -41,19 +41,19 @@
     @media print {
       display: none;
     }
+  }
 
-    &__hints {
-      max-width: 380px;
+  .hints {
+    max-width: 380px;
 
-      @include desktop {
-        text-align: start;
-      }
+    @include desktop {
+      text-align: start;
     }
+  }
 
-    &__imprint {
-      @include desktop {
-        text-align: end;
-      }
+  .imprint {
+    @include desktop {
+      text-align: end;
     }
   }
 </style>
