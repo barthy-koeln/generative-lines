@@ -1,6 +1,7 @@
 ---
 import SFormField from '../structures/SFormField.astro'
 import ASliderFormField from '../atoms/ASliderFormField.astro'
+import AColorFormField from '../atoms/AColorFormField.astro'
 import ASelectFormField, { type SelectOption } from '../atoms/ASelectFormField.astro'
 import { Easing } from '@tweenjs/tween.js'
 
@@ -12,6 +13,12 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     }))
   ]
 })
+
+const lineCapOptions: SelectOption[] = [
+  { value: 'butt', label: 'Butt' },
+  { value: 'round', label: 'Round' },
+  { value: 'square', label: 'Square' }
+]
 ---
 
 <div class="OLineCanvasForm">
@@ -20,8 +27,8 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     id="lines-canvas-form"
   >
     <ASliderFormField
-      min={0}
-      max={100}
+      min={1}
+      max={128}
       step={1}
       value={16}
       label="Lines"
@@ -30,8 +37,8 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     />
 
     <ASliderFormField
-      min={0}
-      max={100}
+      min={-64}
+      max={64}
       step={1}
       value={16}
       label="Distance"
@@ -50,8 +57,8 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     />
 
     <ASliderFormField
-      min={0}
-      max={100}
+      min={1}
+      max={16}
       step={1}
       value={2}
       label="Thickness"
@@ -60,9 +67,9 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     />
 
     <ASliderFormField
-      min={-0.1}
+      min={-0.05}
       max={0.05}
-      step={0.01}
+      step={0.001}
       value={0.01}
       label="Perspective"
       name="perspective"
@@ -80,7 +87,7 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     />
 
     <ASliderFormField
-      min={0}
+      min={1}
       max={8}
       step={1}
       value={3}
@@ -97,15 +104,20 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
       value="Quadratic.InOut"
     />
 
-    <label for="background">Background:</label>
-    <input
-      type="color"
-      id="background"
-      name="background"
-      value="#181818"
-    >
+    <ASelectFormField
+      label="Line Cap"
+      name="line-cap"
+      id="line-cap"
+      options={lineCapOptions}
+      value="round"
+    />
 
-    <hr>
+    <AColorFormField
+      label="Background"
+      name="background"
+      id="background"
+      value="#181818"
+    />
 
     <ASliderFormField
       min={0}
@@ -143,15 +155,14 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
     throw new Error('Could not get lines-canvas element')
   }
 
-  form.addEventListener('change', function (event) {
+  form.addEventListener('input', function (event) {
     const element = event.target
-    console.info({ event, element })
 
     if (!element) {
       throw new Error('Could not get form element')
     }
 
-    if (!(element instanceof HTMLInputElement)) {
+    if (!(element instanceof HTMLInputElement) && !(element instanceof HTMLSelectElement)) {
       throw new Error('Event target is not a form element')
     }
 

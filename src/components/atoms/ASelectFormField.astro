@@ -33,7 +33,10 @@ const {
     value={value}
   >
     {options.map(option => (
-      <option value={option.value}>{option.label}</option>
+      <option
+        value={option.value}
+        {...(value == option.value ? {selected: true} : {})}
+      >{option.label}</option>
     ))}
   </select>
 </SFormField>
