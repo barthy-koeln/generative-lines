@@ -1,11 +1,11 @@
 export interface FormFieldMinReq {
-  label: string,
   name: string,
   placeholder?: string,
-  required?: boolean
+  required?: boolean,
+  value?: string|number
 }
 
 export interface FormField extends FormFieldMinReq {
-  id: string,
-  value: string|number
+  id: string
+  label?: string
 }

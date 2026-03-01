@@ -1,0 +1,31 @@
+---
+import SFormField from '../structures/SFormField.astro'
+import type { FormField } from '../../lib/form.ts'
+import AInput from './AInput.astro'
+
+export interface Props extends FormField {
+  value: string
+}
+
+const {
+  label,
+  name,
+  placeholder,
+  required,
+  value
+} = Astro.props
+---
+
+<SFormField
+  label={label}
+  name={name}
+  required={required}
+>
+  <AInput
+    type="color"
+    id={name}
+    name={name}
+    value={value}
+    placeholder={placeholder}
+  />
+</SFormField>

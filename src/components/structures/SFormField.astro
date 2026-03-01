@@ -1,15 +1,18 @@
 ---
-import type { FormFieldMinReq } from '../../lib/form.ts'
-export interface Props extends FormFieldMinReq {}
+import type { FormField } from '../../lib/form.ts'
+export interface Props extends FormField {
+  class?: string
+}
 
 const {
   label,
   name,
   required,
+  class: className
 } = Astro.props
 ---
 
-<div class="SFormField">
+<div class:list={['SFormField', className]}>
   <label for={name}>{label}{required ? '*' : ''}</label>
   <slot/>
 </div>
@@ -20,10 +23,11 @@ const {
   .SFormField {
     display: flex;
     flex-direction: column;
+    gap: var(--spacer-sm);
   }
 
-  .SFormField:has(select) {
-    gap: var(--spacer-sm);
+  .SFormField:has(input[type=range]) {
+    gap: 0;
   }
 
   label {

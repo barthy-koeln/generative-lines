@@ -15,6 +15,8 @@ import OFooter from '../organisms/OFooter.astro'
 
   .TPage {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   main {
@@ -25,6 +27,7 @@ import OFooter from '../organisms/OFooter.astro'
     justify-content: center;
     margin: auto;
     max-width: var(--bp-desktop);
+    gap: var(--spacer-lg);
     padding: 4rem 1rem;
     width: 100%;
 

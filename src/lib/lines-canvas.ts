@@ -1,6 +1,6 @@
 import { ATTRIBUTE_TO_KEY, parseAllAttributes, parseSingleAttribute, } from './config-schema.ts'
 import { useRenderer } from './renderer.ts'
-import type { RawConfig } from './config.ts'
+import { DEFAULT_RAW_CONFIG, type RawConfig } from './config.ts'
 
 export interface LinesCanvasAttributes extends RawConfig {
   autoplay?: 'true' | 'false' | 'loop'
@@ -31,21 +31,9 @@ export class LinesCanvas extends HTMLElement {
 
   connectedCallback () {
     this.renderer.configure(parseAllAttributes(this, {
+      ...DEFAULT_RAW_CONFIG,
       renderWidth: this.offsetWidth,
-      renderHeight: this.offsetHeight,
-      steps: 12,
-      colors: 3,
-      distance: 12,
-      amplitude: 32,
-      thickness: 2,
-      lines: 12,
-      paddingX: 20,
-      paddingY: 20,
-      background: 'transparent',
-      perspective: -0.02,
-      easing: 'Cubic.InOut',
-      animationDuration: 0,
-      animationEasing: 'Cubic.InOut',
+      renderHeight: this.offsetHeight
     }))
 
     this.isMounted = true
@@ -74,10 +62,10 @@ export class LinesCanvas extends HTMLElement {
     const update = parseSingleAttribute(this, name)
     if (!update) {
       // Unknown attribute
+      console.info(`Unknown attribute "${name}" changed, skipping update.`)
       return
     }
 
     this.renderer.updateConfig(update)
-    this.renderer.animateLoop()
   }
 }

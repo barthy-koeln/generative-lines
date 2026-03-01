@@ -33,6 +33,8 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 <TPage>
   <h1>Generative Lines</h1>
 
+  <p>Beautiful lightweight animations, usable as loading throbbers or scroll-in animations.</p>
+
   <OLineCanvasForm>
     <lines-canvas
       animation-duration="1000"
@@ -45,8 +47,6 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
       distance="6"
       amplitude="64"
       perspective="0.01"
-      render-width="1024"
-      render-height="1024"
       class="demo"
       autoplay="loop"
     />
@@ -56,14 +56,13 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
 
-    customElements.define('lines-canvas', LinesCanvas)
+  customElements.define('lines-canvas', LinesCanvas)
 </script>
 
 <style>
   .demo {
     display: block;
-    height: 80vh;
-    width: auto;
+    width: 100%;
     aspect-ratio: 1;
   }
 </style>

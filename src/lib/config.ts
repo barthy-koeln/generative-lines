@@ -20,6 +20,7 @@ export interface Config {
   background: Color
   animationDuration: Milliseconds
   animationEasing: EasingFunction
+  lineCap: CanvasLineCap
 }
 
 export interface RenderState {
@@ -46,7 +47,8 @@ export interface RawConfig {
   easing: string
   background: string
   animationDuration: Milliseconds
-  animationEasing: string
+  animationEasing: string,
+  lineCap: CanvasLineCap
 }
 
 function getEasingByString (easing: string): EasingFunction {
@@ -77,6 +79,7 @@ export function resolveConfig (raw: RawConfig): Config {
     background: chroma(raw.background),
     animationDuration: raw.animationDuration,
     animationEasing: getEasingByString(raw.animationEasing),
+    lineCap: raw.lineCap,
   }
 }
 
@@ -105,4 +108,24 @@ export function createRenderState (config: Config): RenderState {
     steps: fillArray(config.steps, getRandomFloat),
     colors: fillArray(config.colors, getRandomColor),
   }
+}
+
+
+export const DEFAULT_RAW_CONFIG: RawConfig = {
+  renderWidth: 1024,
+  renderHeight: 1024,
+  steps: 12,
+  colors: 3,
+  distance: 12,
+  amplitude: 32,
+  thickness: 2,
+  lines: 12,
+  paddingX: 20,
+  paddingY: 20,
+  background: 'transparent',
+  perspective: -0.02,
+  easing: 'Cubic.InOut',
+  animationDuration: 0,
+  animationEasing: 'Cubic.InOut',
+  lineCap: 'round',
 }

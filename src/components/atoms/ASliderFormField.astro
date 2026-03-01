@@ -27,7 +27,7 @@ const {
   required={required}
   class="ASliderFormField"
 >
-  <div class="ASliderFormField__row">
+  <div class="row">
     <AInput
       type="range"
       id={name}
@@ -39,7 +39,7 @@ const {
       placeholder={placeholder}
     />
 
-    <span class="ASliderFormField__value">{value}</span>
+    <span class="value">{value}</span>
   </div>
 </SFormField>
 
@@ -48,7 +48,7 @@ const {
 
   for (const wrapper of wrappers) {
     const slider = wrapper.querySelector<HTMLInputElement>('input[type="range"]')
-    const valueDisplay = wrapper.querySelector<HTMLSpanElement>('.ASliderFormField__value')
+    const valueDisplay = wrapper.querySelector<HTMLSpanElement>('.value')
 
     function updateValue () {
       valueDisplay.textContent = slider.value
@@ -60,17 +60,15 @@ const {
 </script>
 
 <style lang="scss">
-  .ASliderFormField {
-    &__row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacer-sm);
-    }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-sm);
+  }
 
-    &__value {
-      font-size: var(--font-size-4);
-      min-width: 40px;
-      text-align: right;
-    }
+  .value {
+    font-size: var(--font-size-4);
+    min-width: 40px;
+    text-align: right;
   }
 </style>
