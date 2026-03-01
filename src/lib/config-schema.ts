@@ -26,6 +26,7 @@ export const CONFIG_SCHEMA: ConfigSchema = {
   animationDuration: { attribute: 'animation-duration', type: 'int' },
   animationEasing: { attribute: 'animation-easing', type: 'string' },
   lineCap: { attribute: 'line-cap', type: 'string' },
+  lineJoin: { attribute: 'line-join', type: 'string' },
 }
 
 /**

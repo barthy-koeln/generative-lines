@@ -21,6 +21,7 @@ export interface Config {
   animationDuration: Milliseconds
   animationEasing: EasingFunction
   lineCap: CanvasLineCap
+  lineJoin: CanvasLineJoin
 }
 
 export interface RenderState {
@@ -49,6 +50,7 @@ export interface RawConfig {
   animationDuration: Milliseconds
   animationEasing: string,
   lineCap: CanvasLineCap
+  lineJoin: CanvasLineJoin
 }
 
 function getEasingByString (easing: string): EasingFunction {
@@ -80,6 +82,7 @@ export function resolveConfig (raw: RawConfig): Config {
     animationDuration: raw.animationDuration,
     animationEasing: getEasingByString(raw.animationEasing),
     lineCap: raw.lineCap,
+    lineJoin: raw.lineJoin
   }
 }
 
@@ -128,4 +131,5 @@ export const DEFAULT_RAW_CONFIG: RawConfig = {
   animationDuration: 0,
   animationEasing: 'Cubic.InOut',
   lineCap: 'round',
+  lineJoin: 'round',
 }

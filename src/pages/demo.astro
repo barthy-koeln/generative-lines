@@ -1,0 +1,57 @@
+---
+
+---
+
+<div class="content">
+  <h1>Welcome to the Demo Website</h1>
+  <p>This is a scrolling website with a <lines-canvas autoplay={false} /></p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+  <p>Scroll down to see the <lines-canvas /> in action.</p>
+</div>
+
+<script>
+  import { LinesCanvas } from '../lib/lines-canvas.ts'
+
+  customElements.define('lines-canvas', LinesCanvas)
+
+  const observer = new IntersectionObserver(handleIntersection, {
+    threshold: 0.8,
+  });
+
+  function handleIntersection (entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) {
+        continue
+      }
+
+      const linesCanvas: Element = entry.target;
+      if (!(linesCanvas instanceof LinesCanvas)) {
+        throw new Error('Entry target is not a LinesCanvas element');
+      }
+
+      linesCanvas.renderer.animateIn();
+    }
+  }
+
+  const canvasses = Array.from(document.querySelectorAll<LinesCanvas>('lines-canvas'))
+  for (const canvas of canvasses) {
+    observer.observe(canvas)
+  }
+</script>

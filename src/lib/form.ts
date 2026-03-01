@@ -6,6 +6,6 @@ export interface FormFieldMinReq {
 }
 
 export interface FormField extends FormFieldMinReq {
-  id: string
+  id?: string
   label?: string
 }
