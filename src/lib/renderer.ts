@@ -19,36 +19,25 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
   function _setDrawingStyle () {
     clear()
 
+    context.fillStyle = 'transparent'
     context.strokeStyle = state.colors.length > 1
       ? createGradient(context, config.paddingX, config.renderWidth - (2 * config.paddingX), state.colors)
       : state.colors[0].hex()
     context.lineWidth = config.thickness
     context.lineCap = config.lineCap
+    context.lineJoin = config.lineJoin
   }
 
-  function _setClearingStyle () {
-    context.fillStyle = config.background.hex()
-    context.strokeStyle = config.background.hex()
-    context.lineWidth = config.thickness + 2
-    context.lineCap = config.lineCap
-  }
-
-  function _createTween (style: () => void): Tween {
-    let previousFactor: number = 0
-
-    const tween: Tween = new Tween({ factor: 0 })
-      .to({ factor: 1 })
+  function _createTween (from: number , to: number): Tween {
+    const tween: Tween = new Tween({ factor: from })
+      .to({ factor: to })
       .duration(config.animationDuration)
       .easing(config.animationEasing)
 
     tween
-      .onEveryStart(style)
-      .onComplete(() => {
-        previousFactor = 0
-      })
       .onUpdate(({ factor }: { factor: number }) => {
-        _draw(previousFactor, factor)
-        previousFactor = factor
+        clear()
+        _draw(0, factor)
       })
 
     return tween
@@ -56,26 +45,27 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
 
   function _draw (from: number, to: number) {
     for (const points of lines) {
-      context.beginPath()
-
       const pixels: number = points.length - 1
       const fromPixel = Math.floor(from * pixels)
       const toPixel = Math.floor(to * pixels)
 
+      context.beginPath()
+      context.moveTo(points[fromPixel][0], points[fromPixel][1])
+
       for (let pixel = fromPixel; pixel < toPixel; pixel++) {
-        const startPoint = points[pixel]
         const targetPoint = points[pixel + 1]
-        context.moveTo(startPoint[0], startPoint[1])
-        context.quadraticCurveTo(startPoint[0], startPoint[1], targetPoint[0], targetPoint[1])
+        context.lineTo(targetPoint[0], targetPoint[1])
       }
 
       context.stroke()
     }
   }
 
-  function animateIn (): Promise<void> {
+  function _animate(from: number, to: number): Promise<void> {
+    _setDrawingStyle()
+
     return new Promise((resolve) => {
-      const tween = _createTween(_setDrawingStyle)
+      const tween = _createTween(from, to)
       tweenGroup.removeAll()
       tweenGroup.add(tween)
 
@@ -85,22 +75,24 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     })
   }
 
-  function animateOut (): Promise<void> {
-    return new Promise((resolve) => {
-      const tween = _createTween(_setClearingStyle)
-      tweenGroup.removeAll()
-      tweenGroup.add(tween)
+  function animateIn (): Promise<void> {
+    return _animate(0, 1)
+  }
 
-      tween
-        .onComplete(() => resolve())
-        .start()
-    })
+  function animateBackOut (): Promise<void> {
+    return _animate(1, 0)
+  }
+
+  function animateWipeOut (): Promise<void> {
+    return _animate(0, 2)
   }
 
   function animateLoop (holdAfterIn: Milliseconds = 1000, holdAfterOut: Milliseconds = 300) {
-    const animateIn = _createTween(_setDrawingStyle)
-    const animateOut = _createTween(_setClearingStyle)
-    const animateInFollow = _createTween(_setDrawingStyle)
+    _setDrawingStyle()
+
+    const animateIn = _createTween(0, 1)
+    const animateOut = _createTween(1, 0)
+    const animateInFollow = _createTween(0, 1)
 
     animateIn
       .chain(animateOut)
@@ -118,14 +110,13 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
   }
 
   function clear () {
-    context.fillStyle = 'transparent'
     context.clearRect(0, 0, canvas.width, canvas.height)
   }
 
   function redraw () {
     clear()
     _setDrawingStyle()
-    _draw(0, lines[0].length)
+    _draw(0, 1)
   }
 
   function configure (raw: RawConfig, existingState?: RenderState) {
@@ -181,7 +172,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     }
 
     if (needsRebuild) {
-      console.info('rebuilding lines due to config change', newConfig)
       rebuildLines()
     }
 

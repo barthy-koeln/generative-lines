@@ -2,7 +2,6 @@
 import '../root.scss'
 import '@fontsource/ubuntu/latin-400.css'
 import '@fontsource/ubuntu/latin-700.css'
-import MLinesCanvas from '../components/molecules/MLinesCanvas.astro'
 import TPage from '../components/templates/TPage.astro'
 import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 ---
@@ -37,26 +36,47 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 
   <OLineCanvasForm>
     <lines-canvas
-      animation-duration="1000"
-      steps="8"
-      lines="24"
-      colors="3"
-      thickness="2"
-      easing="Bounce.InOut"
-      animation-easing="Quadratic.InOut"
-      distance="6"
-      amplitude="64"
-      perspective="0.01"
       class="demo"
-      autoplay="loop"
+      autoplay="false"
     />
+
+    <button id="download-button">Download</button>
   </OLineCanvasForm>
 </TPage>
 
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
+  import { download } from '../lib/utils/file.ts'
 
   customElements.define('lines-canvas', LinesCanvas)
+
+  const downloadButton = document.querySelector<HTMLButtonElement>('#download-button')
+  const linesCanvas = document.querySelector<LinesCanvas>('lines-canvas')
+  if (!linesCanvas) {
+    throw new Error('LinesCanvas element not found')
+  }
+
+  const form = document.querySelector<HTMLFormElement>('form')
+  if (!form) {
+    throw new Error('Form element not found')
+  }
+
+  const data = new FormData(form)
+  linesCanvas.startBatchUpdate()
+  for(const [key, value] of data.entries()) {
+    linesCanvas.setAttribute(key, value.toString())
+  }
+  linesCanvas.endBatchUpdate()
+
+  linesCanvas.renderer.animateLoop()
+
+  if (!downloadButton) {
+    throw new Error('Download button or lines canvas not found')
+  }
+
+  downloadButton.addEventListener('click', () => {
+    download(linesCanvas.renderer.config, linesCanvas.canvas)
+  })
 </script>
 
 <style>

@@ -7,12 +7,14 @@ export interface LinesCanvasAttributes extends RawConfig {
 }
 
 export class LinesCanvas extends HTMLElement {
-  static observedAttributes = [...ATTRIBUTE_TO_KEY.keys()]
+  public static observedAttributes = [...ATTRIBUTE_TO_KEY.keys()]
 
-  canvas: HTMLCanvasElement
-  ctx: CanvasRenderingContext2D
-  renderer: ReturnType<typeof useRenderer>
-  isMounted: boolean = false
+  private isBatchUpdating: boolean = false
+
+  public canvas: HTMLCanvasElement
+  public ctx: CanvasRenderingContext2D
+  public renderer: ReturnType<typeof useRenderer>
+  public isMounted: boolean = false
 
   constructor () {
     super()
@@ -67,5 +69,18 @@ export class LinesCanvas extends HTMLElement {
     }
 
     this.renderer.updateConfig(update)
+  }
+
+  public startBatchUpdate() {
+    this.isBatchUpdating = true
+  }
+
+  public endBatchUpdate() {
+    this.isBatchUpdating = false
+    this.renderer.configure(parseAllAttributes(this, {
+      ...DEFAULT_RAW_CONFIG,
+      renderWidth: this.offsetWidth,
+      renderHeight: this.offsetHeight
+    }))
   }
 }

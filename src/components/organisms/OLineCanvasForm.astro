@@ -15,9 +15,15 @@ const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, g
 })
 
 const lineCapOptions: SelectOption[] = [
-  { value: 'butt', label: 'Butt' },
   { value: 'round', label: 'Round' },
+  { value: 'butt', label: 'Butt' },
   { value: 'square', label: 'Square' }
+]
+
+const lineJoinOptions: SelectOption[] = [
+  { value: 'round', label: 'Round' },
+  { value: 'miter', label: 'Miter' },
+  { value: 'bevel', label: 'Bevel' }
 ]
 ---
 
@@ -112,6 +118,14 @@ const lineCapOptions: SelectOption[] = [
       value="round"
     />
 
+    <ASelectFormField
+      label="Line Join"
+      name="line-join"
+      id="line-join"
+      options={lineJoinOptions}
+      value="round"
+    />
+
     <AColorFormField
       label="Background"
       name="background"
@@ -131,8 +145,8 @@ const lineCapOptions: SelectOption[] = [
 
     <ASelectFormField
       label="Animation Easing"
-      name="easing"
-      id="easing"
+      name="animation-easing"
+      id="animation-easing"
       options={easingOptions}
       value="Quadratic.InOut"
     />
@@ -145,14 +159,15 @@ const lineCapOptions: SelectOption[] = [
 
 <script>
   const wrapper = document.querySelector<HTMLFormElement>('.OLineCanvasForm')
-  const form = wrapper?.querySelector('form')
-  const linesCanvasElement = wrapper.querySelector('lines-canvas')
   if (!wrapper) {
     throw new Error('Could not get form')
   }
 
-  if (!linesCanvasElement) {
-    throw new Error('Could not get lines-canvas element')
+  const form = wrapper.querySelector<HTMLFormElement>('form')
+
+
+  if (!form) {
+    throw new Error('Could not get form element')
   }
 
   form.addEventListener('input', function (event) {
@@ -165,14 +180,13 @@ const lineCapOptions: SelectOption[] = [
     if (!(element instanceof HTMLInputElement) && !(element instanceof HTMLSelectElement)) {
       throw new Error('Event target is not a form element')
     }
+    const linesCanvasElement = wrapper.querySelector('lines-canvas')
 
+    if (!linesCanvasElement) {
+      throw new Error('Could not get lines-canvas element')
+    }
     linesCanvasElement.setAttribute(element.name, element.value)
   })
-
-  const data = new FormData(form)
-  for (const [name, value] of data.entries()) {
-    linesCanvasElement.setAttribute(name, value)
-  }
 </script>
 
 <style>
