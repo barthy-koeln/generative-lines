@@ -28,16 +28,16 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     context.lineJoin = config.lineJoin
   }
 
-  function _createTween (from: number , to: number): Tween {
-    const tween: Tween = new Tween({ factor: from })
-      .to({ factor: to })
+  function _createTween (from: number[], to: number[]): Tween {
+    const tween: Tween = new Tween({ start: from[0], end: from[1] })
+      .to({ start: to[0], end: to[1] })
       .duration(config.animationDuration)
       .easing(config.animationEasing)
 
     tween
-      .onUpdate(({ factor }: { factor: number }) => {
+      .onUpdate(({ start, end }: { start: number, end: number }) => {
         clear()
-        _draw(0, factor)
+        _draw(start, end)
       })
 
     return tween
@@ -61,7 +61,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     }
   }
 
-  function _animate(from: number, to: number): Promise<void> {
+  function animate(from: number[], to: number[]): Promise<void> {
     _setDrawingStyle()
 
     return new Promise((resolve) => {
@@ -76,23 +76,23 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
   }
 
   function animateIn (): Promise<void> {
-    return _animate(0, 1)
+    return animate([0, 0], [0, 1])
   }
 
   function animateBackOut (): Promise<void> {
-    return _animate(1, 0)
+    return animate([0, 1], [0, 0])
   }
 
   function animateWipeOut (): Promise<void> {
-    return _animate(0, 2)
+    return animate([0, 1], [1, 1])
   }
 
   function animateLoop (holdAfterIn: Milliseconds = 1000, holdAfterOut: Milliseconds = 300) {
     _setDrawingStyle()
 
-    const animateIn = _createTween(0, 1)
-    const animateOut = _createTween(1, 0)
-    const animateInFollow = _createTween(0, 1)
+    const animateIn = _createTween([0, 0], [0, 1])
+    const animateOut = _createTween([0, 1], [1, 1])
+    const animateInFollow = _createTween([0, 0], [0, 1])
 
     animateIn
       .chain(animateOut)
@@ -205,8 +205,10 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       updateState(newState)
     },
     configure,
+    animate,
     animateIn,
-    animateOut,
+    animateBackOut,
+    animateWipeOut,
     animateLoop,
     updateConfig,
     updateState,

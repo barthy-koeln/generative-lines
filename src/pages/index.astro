@@ -2,34 +2,11 @@
 import '../root.scss'
 import '@fontsource/ubuntu/latin-400.css'
 import '@fontsource/ubuntu/latin-700.css'
-import TPage from '../components/templates/TPage.astro'
 import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
+import Layout from '../layouts/Layout.astro'
 ---
 
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="/favicon.svg"
-  />
-  <link
-    rel="icon"
-    href="/favicon.ico"
-  />
-  <meta
-    name="viewport"
-    content="width=device-width"
-  />
-  <meta
-    name="generator"
-    content={Astro.generator}
-  />
-  <title>Astro</title>
-</head>
-<body>
-<TPage>
+<Layout>
   <h1>Generative Lines</h1>
 
   <p>Beautiful lightweight animations, usable as loading throbbers or scroll-in animations.</p>
@@ -42,7 +19,7 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 
     <button id="download-button">Download</button>
   </OLineCanvasForm>
-</TPage>
+</Layout>
 
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
@@ -63,7 +40,7 @@ import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 
   const data = new FormData(form)
   linesCanvas.startBatchUpdate()
-  for(const [key, value] of data.entries()) {
+  for (const [key, value] of data.entries()) {
     linesCanvas.setAttribute(key, value.toString())
   }
   linesCanvas.endBatchUpdate()

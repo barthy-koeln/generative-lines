@@ -1,30 +1,59 @@
 ---
-
+import Layout from '../layouts/Layout.astro'
 ---
 
-<div class="content">
+<Layout>
   <h1>Welcome to the Demo Website</h1>
-  <p>This is a scrolling website with a <lines-canvas autoplay={false} /></p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-  <p>Scroll down to see the <lines-canvas /> in action.</p>
-</div>
+
+  <p>Scroll down this page to trigger lines animate as their canvasses become visible.</p>
+
+  <section>
+    <p>
+      Hedgehogs are famous for their prickly spines, which they have everywhere except on their face, legs and bellies.
+      These cute critters depend on their spines for defense, both while they sleep and when they face enemies. By
+      curling
+      into a tight ball and tucking in their heads, tail and legs, they protect vulnerable parts of their body.
+    </p>
+
+    <lines-canvas
+      animation-duration="1000"
+      steps="8"
+      lines="24"
+      colors="3"
+      thickness="2"
+      easing="Bounce.InOut"
+      animation-easing="Quadratic.InOut"
+      distance="6"
+      amplitude="64"
+      perspective="0.01"
+      autoplay="false"
+    />
+  </section>
+
+  <section>
+    <lines-canvas
+      animation-duration="1000"
+      steps="8"
+      lines="24"
+      colors="3"
+      thickness="2"
+      easing="Bounce.InOut"
+      animation-easing="Quadratic.InOut"
+      distance="6"
+      amplitude="64"
+      perspective="0.01"
+      autoplay="false"
+    />
+
+    <p>
+      The body of adult hedgehogs ranges from 14 to 30 centimetres long, and their tail can add one to six centimetres.
+      When they are born (there can be up to seven in a litter) their spines are soft and short. But soon after birth,
+      their spines harden, becoming stiffer, sharper and longer. Babies stay in the nest until they”re about three weeks
+      old. By that time, their eyes are open, their spines are effective and they can safely follow their mother outside
+      the nest as she looks for food.
+    </p>
+  </section>
+</Layout>
 
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
@@ -33,7 +62,7 @@
 
   const observer = new IntersectionObserver(handleIntersection, {
     threshold: 0.8,
-  });
+  })
 
   function handleIntersection (entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
     for (const entry of entries) {
@@ -41,12 +70,18 @@
         continue
       }
 
-      const linesCanvas: Element = entry.target;
+      const linesCanvas: Element = entry.target
       if (!(linesCanvas instanceof LinesCanvas)) {
-        throw new Error('Entry target is not a LinesCanvas element');
+        throw new Error('Entry target is not a LinesCanvas element')
       }
 
-      linesCanvas.renderer.animateIn();
+      if (linesCanvas.parentElement?.firstElementChild == linesCanvas) {
+        linesCanvas.renderer.animate([0, 0], [0, 1])
+      } else {
+        linesCanvas.renderer.animate([1, 1], [0, 1])
+      }
+
+      observer.unobserve(linesCanvas)
     }
   }
 
@@ -55,3 +90,24 @@
     observer.observe(canvas)
   }
 </script>
+
+<style>
+  lines-canvas {
+    display: block;
+    width: 60%;
+    aspect-ratio: 1;
+  }
+
+  p {
+    width: 40%;
+  }
+
+  section {
+    height: 40vh;
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacer-lg);
+    align-items: center;
+    justify-content: center;
+  }
+</style>
