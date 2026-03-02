@@ -21,8 +21,6 @@ export function createDrawingController ({
     const config = getConfig()
     const state = getState()
 
-    clearCanvas()
-
     context.imageSmoothingEnabled = false
     context.canvas.style.background = config.background.hex()
     context.fillStyle = 'transparent'

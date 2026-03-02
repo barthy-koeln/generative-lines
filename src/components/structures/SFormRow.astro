@@ -1,0 +1,29 @@
+---
+export interface Props {
+  label: string
+}
+
+const { label } = Astro.props
+---
+
+<fieldset class="SFormRow">
+  <label>{label}</label>
+  <hr>
+  <div class="row">
+    <slot/>
+  </div>
+</fieldset>
+
+<style>
+  .SFormRow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-sm);
+  }
+
+  .row {
+    display: flex;
+    gap: var(--spacer);
+    justify-content: stretch;
+  }
+</style>
