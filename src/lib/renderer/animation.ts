@@ -94,6 +94,6 @@ export function createAnimationController ({
     animateIn,
     animateBackOut,
     animateWipeOut,
-    animateLoop,
+    animateLoop
   }
 }

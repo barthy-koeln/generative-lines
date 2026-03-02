@@ -1,6 +1,7 @@
 import { createAnimationController } from './renderer/animation.ts'
 import { createDrawingController } from './renderer/drawing.ts'
 import { createStateController } from './renderer/state.ts'
+import type { Config } from './config.ts'
 
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
   const {
@@ -9,10 +10,14 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     mergeConfig,
     getState,
     mergeState,
-    rerollLines
+    rerollLines,
+    rerollColors,
+    rebuildLines,
+    resizeCanvas
   } = createStateController({
     canvas,
     context,
+    onConfigChange
   })
 
   const {
@@ -20,33 +25,74 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     drawSegment,
     applyDrawingStyle,
     redrawFull,
+    captureImage
   } = createDrawingController({
     getConfig,
     getState,
     context,
   })
 
-  const animator = createAnimationController({
+  const {
+    animate,
+    animateIn,
+    animateBackOut,
+    animateWipeOut,
+    animateLoop
+  } = createAnimationController({
     getConfig,
     applyDrawingStyle,
     clearCanvas,
     drawSegment,
   })
 
-  function capture () {
-    const config = getConfig()
-    const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
-    clearCanvas()
+  function onConfigChange (newConfig: Partial<Config>, config: Config): void {
+    let needsRebuild = false
+    let needsRestyle = false
+    let needsResize = false
 
-    context.fillStyle = config.background.hex()
-    context.fillRect(0, 0, config.renderWidth, config.renderHeight)
-    applyDrawingStyle()
-    drawSegment(0, 1)
+    for (const [key, value] of Object.entries(newConfig)) {
+      if (value === undefined) {
+        continue
+      }
 
-    const imageData = canvas.toDataURL('image/png')
-    context.putImageData(currentState, 0, 0)
+      if (key == 'colors') {
+        needsRestyle = true
+        rerollColors()
+        continue
+      }
 
-    return imageData
+      if(key == 'steps') {
+        needsRebuild = true
+        rerollLines()
+        continue
+      }
+
+      if (['renderWidth', 'renderHeight'].includes(key)) {
+        needsResize = true
+      }
+
+      if (['distance', 'amplitude', 'thickness', 'lines', 'paddingX', 'paddingY', 'perspective', 'easing'].includes(key)) {
+        needsRebuild = true
+      }
+
+      if (['background', 'thickness', 'line-cap', 'line-join'].includes(key)) {
+        needsRestyle = true
+      }
+    }
+
+    if (needsRestyle) {
+      applyDrawingStyle()
+    }
+
+    if (needsRebuild) {
+      rebuildLines()
+    }
+
+    if (needsResize) {
+      resizeCanvas()
+    }
+
+    redrawFull()
   }
 
   return {
@@ -62,14 +108,19 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     set state (newState) {
       mergeState(newState)
     },
-    configure: initialize,
-    ...animator,
-    updateConfig: mergeConfig,
-    updateState: mergeState,
-    reroll: rerollLines,
-    capture,
-    redraw: redrawFull,
-    clear: clearCanvas,
+    initialize,
+    mergeConfig,
+    mergeState,
+    rerollLines,
+    rerollColors,
+    captureImage,
+    redrawFull,
+    clearCanvas,
+    animate,
+    animateIn,
+    animateBackOut,
+    animateWipeOut,
+    animateLoop,
   }
 }
 
