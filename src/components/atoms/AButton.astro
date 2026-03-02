@@ -1,0 +1,31 @@
+---
+export interface Props  {
+  id?: string
+}
+
+const props = Astro.props
+---
+
+<button class="AButton" {...props}>
+  <slot/>
+</button>
+
+<style>
+  .AButton {
+    background: var(--color-accent);
+    border: none;
+    color: var(--color-white);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: var(--spacer-sm) var(--spacer-md);
+    transition: background-color var(--anim-duration) var(--anim-easing);
+
+    &:hover {
+      background: var(--color-accent-dark);
+    }
+
+    &:active {
+      background: var(--color-accent-dark);
+    }
+  }
+</style>

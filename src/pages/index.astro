@@ -4,6 +4,7 @@ import '@fontsource/ubuntu/latin-400.css'
 import '@fontsource/ubuntu/latin-700.css'
 import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 import Layout from '../layouts/Layout.astro'
+import AButton from '../components/atoms/AButton.astro'
 ---
 
 <Layout>
@@ -17,7 +18,7 @@ import Layout from '../layouts/Layout.astro'
       autoplay="false"
     />
 
-    <button id="download-button">Download</button>
+    <AButton id="download-button">Download</AButton>
   </OLineCanvasForm>
 </Layout>
 
@@ -52,7 +53,7 @@ import Layout from '../layouts/Layout.astro'
   }
 
   downloadButton.addEventListener('click', () => {
-    download(linesCanvas.renderer.config, linesCanvas.canvas)
+    download(linesCanvas)
   })
 </script>
 
