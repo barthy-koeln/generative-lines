@@ -1,10 +1,13 @@
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from '../config.ts'
 import { createLines } from '../generator.ts'
 import type { Line } from '../types.ts'
+import { fillArray } from '../utils/array.ts'
+import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
 
 export interface StateControllerParams {
   canvas: HTMLCanvasElement
-  context: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D,
+  onConfigChange: (newConfig: Partial<Config>, mergedConfig: Config) => void
 }
 
 /**
@@ -14,17 +17,20 @@ export interface StateControllerParams {
 export function createStateController ({
   canvas,
   context,
+  onConfigChange
 }: StateControllerParams) {
   let config: Config
   let state: RenderState
 
-  function initialize (rawConfig: RawConfig, existingState?: RenderState): void {
-    config = resolveConfig(rawConfig)
-
+  function resizeCanvas(){
     canvas.width = config.renderWidth
     canvas.height = config.renderHeight
-    context.imageSmoothingEnabled = false
-    canvas.style.background = config.background.hex()
+  }
+
+  function initialize (rawConfig: RawConfig, existingState?: RenderState): void {
+    config = resolveConfig(rawConfig)
+    resizeCanvas()
+
     // Precedence: Incoming one, existing one, or new random one if not provided
     state = existingState ?? state ?? createRenderState(config)
     rebuildLines()
@@ -36,43 +42,7 @@ export function createStateController ({
       ...newConfig,
     }
 
-    let needsReroll = false
-    let needsRebuild = false
-    for (const [key, value] of Object.entries(newConfig)) {
-      if (value === undefined) {
-        continue
-      }
-
-      if (['renderWidth', 'renderHeight'].includes(key)) {
-        canvas.width = config.renderWidth
-        canvas.height = config.renderHeight
-      }
-
-      if (['steps', 'colors'].includes(key)) {
-        needsReroll = true
-        needsRebuild = true
-      }
-
-      if (['background'].includes(key)) {
-        canvas.style.background = config.background.hex()
-      }
-
-      if (['distance', 'amplitude', 'thickness', 'lines', 'paddingX', 'paddingY', 'perspective', 'easing'].includes(key)) {
-        needsRebuild = true
-      }
-
-      if (['animationDuration', 'animationEasing'].includes(key)) {
-        // TODO restart animation
-      }
-    }
-
-    if (needsReroll) {
-      state = createRenderState(config)
-    }
-
-    if (needsRebuild) {
-      rebuildLines()
-    }
+    onConfigChange(newConfig, config)
   }
 
   function rebuildLines (): void {
@@ -88,8 +58,11 @@ export function createStateController ({
   }
 
   function rerollLines (): void {
-    state = createRenderState(config)
-    rebuildLines()
+    state.steps = fillArray(config.steps, getRandomFloat)
+  }
+
+  function rerollColors (): void {
+    state.colors = fillArray(config.colors, getRandomColor)
   }
 
   return {
@@ -103,5 +76,8 @@ export function createStateController ({
     mergeConfig,
     mergeState,
     rerollLines,
+    rerollColors,
+    rebuildLines,
+    resizeCanvas,
   }
 }

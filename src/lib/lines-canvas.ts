@@ -32,7 +32,7 @@ export class LinesCanvas extends HTMLElement {
   }
 
   connectedCallback () {
-    this.renderer.configure(parseAllAttributes(this, {
+    this.renderer.initialize(parseAllAttributes(this, {
       ...DEFAULT_RAW_CONFIG,
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
@@ -68,7 +68,7 @@ export class LinesCanvas extends HTMLElement {
       return
     }
 
-    this.renderer.updateConfig(update)
+    this.renderer.mergeConfig(update)
   }
 
   public startBatchUpdate() {
@@ -77,7 +77,7 @@ export class LinesCanvas extends HTMLElement {
 
   public endBatchUpdate() {
     this.isBatchUpdating = false
-    this.renderer.configure(parseAllAttributes(this, {
+    this.renderer.initialize(parseAllAttributes(this, {
       ...DEFAULT_RAW_CONFIG,
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
