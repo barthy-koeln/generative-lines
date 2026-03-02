@@ -2,56 +2,159 @@
 import Layout from '../layouts/Layout.astro'
 ---
 
-<Layout>
-  <h1>Welcome to the Demo Website</h1>
+<Layout dark>
+  <h1>Generative Lines</h1>
 
-  <p>Scroll down this page to trigger lines animate as their canvasses become visible.</p>
+  <p>Procedural line art that responds to your scroll (don't read the text)</p>
 
-  <section>
-    <p>
-      Hedgehogs are famous for their prickly spines, which they have everywhere except on their face, legs and bellies.
-      These cute critters depend on their spines for defense, both while they sleep and when they face enemies. By
-      curling
-      into a tight ball and tucking in their heads, tail and legs, they protect vulnerable parts of their body.
-    </p>
+  <p><a href="/">Playground</a> | <a href="/docs">Use it as a library</a></p>
 
+  <hr>
+
+  <section class="intro">
     <lines-canvas
-      animation-duration="1000"
-      steps="8"
-      lines="24"
-      colors="3"
+      animation-duration="2000"
+      steps="12"
+      lines="32"
+      colors="5"
       thickness="2"
-      easing="Bounce.InOut"
-      animation-easing="Quadratic.InOut"
-      distance="6"
-      amplitude="64"
-      perspective="0.01"
+      easing="Sinusoidal.InOut"
+      animation-easing="Cubic.Out"
+      distance="8"
+      amplitude="96"
+      perspective="0.02"
+      padding-x="0"
+      padding-y="0"
       autoplay="false"
     />
   </section>
 
-  <section>
+  <section class="pattern">
     <lines-canvas
-      animation-duration="1000"
+      animation-duration="1500"
+      steps="6"
+      lines="16"
+      colors="2"
+      thickness="3"
+      easing="Quadratic.InOut"
+      animation-easing="Quadratic.Out"
+      distance="4"
+      amplitude="32"
+      perspective="0.01"
+      padding-x="0"
+      padding-y="0"
+      autoplay="false"
+    />
+    <div class="text-content">
+      <h2>Geometric Harmony</h2>
+      <p>
+        The lines dance in rhythmic patterns, each vertex calculated from Sinusoidal waves
+        layered in superposition. The distance parameter controls the spacing between
+        consecutive points along each curve, while amplitude determines their maximum
+        deviation from the baseline. Perspective adds subtle depth, making foreground
+        lines appear larger than their distant counterparts.
+      </p>
+    </div>
+  </section>
+
+  <section class="pattern reverse">
+    <div class="text-content">
+      <h2>Volumetric Depth</h2>
+      <p>
+        By varying the number of colors and line thickness, we achieve different visual
+        weights. Thinner lines create delicate, ethereal patterns, while thicker strokes
+        convey bold geometric statements. The color count parameter interpolates between
+        discrete hues, creating smooth gradients that shift as the animation progresses.
+        This volumetric approach mimics how light interacts with layered transparent surfaces.
+      </p>
+    </div>
+    <lines-canvas
+      animation-duration="1800"
+      steps="10"
+      lines="40"
+      colors="8"
+      thickness="2"
+      easing="Linear.InOut"
+      animation-easing="Bounce.Out"
+      distance="6"
+      amplitude="16"
+      perspective="0.01"
+      padding-x="0"
+      padding-y="0"
+      autoplay="false"
+    />
+  </section>
+
+  <section class="pattern">
+    <lines-canvas
+      animation-duration="2500"
       steps="8"
       lines="24"
-      colors="3"
+      colors="4"
       thickness="2"
-      easing="Bounce.InOut"
+      easing="Circular.InOut"
+      animation-easing="Sinusoidal.Out"
+      distance="3"
+      amplitude="64"
+      padding-x="0"
+      padding-y="0"
+      perspective="0.015"
+      autoplay="false"
+    />
+    <div class="text-content">
+      <h2>Temporal Flow</h2>
+      <p>
+        Easing functions govern both the geometric evolution and the animation timing.
+        Bounce eases create sudden stops and rebounds, elastic eases introduce overshoot
+        oscillations, and circular eases accelerate through the center of the curve.
+        The animation duration spans from rapid flashes to languid driftings, each
+        creating a distinct temporal rhythm that complements the underlying geometry.
+      </p>
+    </div>
+  </section>
+
+  <section class="pattern reverse">
+    <div class="text-content">
+      <h2>Chaotic Order</h2>
+      <p>
+        Despite the apparent randomness, each frame is deterministically computed from
+        mathematical functions. The intersection observer triggers animations when canvases
+        enter the viewport, creating a cascading effect as you scroll. The threshold of
+        0.8 means animations begin when 80% of the canvas becomes visible, ensuring
+        smooth transitions without premature reveals.
+      </p>
+    </div>
+    <lines-canvas
+      animation-duration="3000"
+      steps="64"
+      lines="9"
+      colors="6"
+      thickness="3"
+      easing="Back.InOut"
+      animation-easing="Quadratic.Out"
+      distance="9"
+      amplitude="18"
+      padding-x="0"
+      padding-y="0"
+      perspective="0.025"
+      autoplay="false"
+    />
+  </section>
+
+  <section class="finale">
+    <lines-canvas
+      animation-duration="4000"
+      steps="20"
+      lines="64"
+      colors="10"
+      thickness="1"
+      easing="Quadratic.InOut"
       animation-easing="Quadratic.InOut"
-      distance="6"
+      distance="1"
       amplitude="64"
       perspective="0.01"
       autoplay="false"
     />
-
-    <p>
-      The body of adult hedgehogs ranges from 14 to 30 centimetres long, and their tail can add one to six centimetres.
-      When they are born (there can be up to seven in a litter) their spines are soft and short. But soon after birth,
-      their spines harden, becoming stiffer, sharper and longer. Babies stay in the nest until they”re about three weeks
-      old. By that time, their eyes are open, their spines are effective and they can safely follow their mother outside
-      the nest as she looks for food.
-    </p>
   </section>
 </Layout>
 
@@ -61,54 +164,140 @@ import Layout from '../layouts/Layout.astro'
   customElements.define('lines-canvas', LinesCanvas)
 
   const observer = new IntersectionObserver(handleIntersection, {
-    threshold: 0.8,
+    threshold: [0.01, 0.8],
   })
 
   function handleIntersection (entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
     for (const entry of entries) {
-      if (!entry.isIntersecting) {
-        continue
-      }
-
-
       const linesCanvas: Element = entry.target
       if (!(linesCanvas instanceof LinesCanvas)) {
         throw new Error('Entry target is not a LinesCanvas element')
       }
 
-      if (linesCanvas.parentElement?.firstElementChild == linesCanvas) {
-        linesCanvas.renderer.animate([0, 0], [0, 1])
-      } else {
-        linesCanvas.renderer.animate([1, 1], [0, 1])
+      if (entry.intersectionRatio <= 0.01) {
+        if (linesCanvas.dataset.status === 'cleared') {
+          continue
+        }
+
+        linesCanvas.renderer.clearCanvas()
+        linesCanvas.dataset.status = 'cleared'
+        continue
       }
 
-      observer.unobserve(linesCanvas)
+      if (linesCanvas.dataset.status === 'animated') {
+        continue
+      }
+
+      if (linesCanvas.parentElement?.classList.contains('finale')) {
+        linesCanvas.renderer.animateLoop()
+        linesCanvas.dataset.status = 'animated'
+        continue
+      }
+
+      if (linesCanvas.parentElement?.firstElementChild === linesCanvas) {
+        linesCanvas.renderer.animate({ from: [0, 0], to: [0, 1] })
+      } else {
+        linesCanvas.renderer.animate({ from: [1, 1], to: [0, 1] })
+      }
+
+      linesCanvas.dataset.status = 'animated'
     }
   }
 
   const canvasses = Array.from(document.querySelectorAll<LinesCanvas>('lines-canvas'))
+  const firstCanvas = canvasses.shift()
+  if (!firstCanvas) {
+    throw new Error('No lines-canvas elements found in the document')
+  }
+
   for (const canvas of canvasses) {
     observer.observe(canvas)
   }
-</script>
 
-<style>
-  lines-canvas {
-    display: block;
-    width: 60%;
-    aspect-ratio: 1;
+  function animate (time: DOMHighResTimeStamp) {
+    const progress = ((time % 8000) / 8000) * Math.PI * 2
+    firstCanvas!.renderer.mergeConfig({ distance: 8 * Math.sin(progress) })
+    requestAnimationFrame(animate)
   }
 
-  p {
-    width: 40%;
+  firstCanvas.renderer.animateIn().then(() => {
+    requestAnimationFrame(animate)
+  })
+</script>
+
+<style lang="scss">
+  @use "../variables" as *;
+
+  header {
+    text-align: center;
+    margin-bottom: var(--spacer-lg);
+
+    p {
+      color: var(--color-white);
+      opacity: 0.7;
+      font-size: var(--fontsize-4);
+    }
   }
 
   section {
-    height: 40vh;
     display: flex;
     flex-direction: row;
-    gap: var(--spacer-lg);
+    gap: var(--spacer-xl);
     align-items: center;
     justify-content: center;
+    padding: var(--spacer-lg) 0;
+  }
+
+  .intro {
+    min-height: 50vh;
+  }
+
+  .finale {
+    min-height: 50vh;
+    flex-direction: column;
+    text-align: center;
+    width: 92vw;
+
+    lines-canvas {
+      height: 256px;
+    }
+  }
+
+  lines-canvas {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+  }
+
+  .text-content {
+    flex: 1;
+    max-width: 45ch;
+
+    h2 {
+      font-size: var(--fontsize-2);
+      color: var(--color-white);
+      margin-bottom: var(--spacer-sm);
+    }
+
+    p {
+      color: var(--color-white);
+      opacity: 0.85;
+      line-height: 1.8;
+    }
+  }
+
+  .pattern {
+    @include desktop {
+      lines-canvas {
+        width: 40%;
+      }
+    }
+  }
+
+  @media (max-width: var(--bp-desktop)) {
+    section {
+      flex-direction: column !important;
+      gap: var(--spacer-lg);
+    }
   }
 </style>

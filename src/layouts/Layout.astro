@@ -5,6 +5,12 @@ import '@fontsource/ubuntu/latin-700.css'
 import TPage from '../components/templates/TPage.astro'
 import ONavBar from '../components/organisms/ONavBar.astro'
 import OFooter from '../components/organisms/OFooter.astro'
+
+export interface Props {
+  dark?: boolean
+}
+
+const { dark = false } = Astro.props
 ---
 
 <html lang="en">
@@ -26,7 +32,7 @@ import OFooter from '../components/organisms/OFooter.astro'
   <title>Astro</title>
 </head>
 <body>
-<TPage>
+<TPage dark={dark}>
   <ONavBar slot="header"/>
 
   <slot/>
