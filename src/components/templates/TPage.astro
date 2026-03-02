@@ -1,13 +1,12 @@
 ---
-import OFooter from '../organisms/OFooter.astro'
 ---
 
 <div class="TPage">
+  <slot name="header"/>
   <main>
     <slot/>
   </main>
-
-  <OFooter/>
+  <slot name="footer"/>
 </div>
 
 <style lang="scss">

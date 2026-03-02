@@ -1,9 +1,9 @@
 ---
-import SFormField from '../structures/SFormField.astro'
 import ASliderFormField from '../atoms/ASliderFormField.astro'
 import AColorFormField from '../atoms/AColorFormField.astro'
 import ASelectFormField, { type SelectOption } from '../atoms/ASelectFormField.astro'
 import { Easing } from '@tweenjs/tween.js'
+import SFormRow from '../structures/SFormRow.astro'
 
 const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, group]) => {
   return [
@@ -40,6 +40,26 @@ const lineJoinOptions: SelectOption[] = [
       label="Lines"
       name="lines"
       id="lines"
+    />
+
+    <ASliderFormField
+      min={0}
+      max={64}
+      step={1}
+      value={12}
+      label="Steps"
+      name="steps"
+      id="steps"
+    />
+
+    <ASliderFormField
+      min={1}
+      max={8}
+      step={1}
+      value={3}
+      label="Colors"
+      name="colors"
+      id="colors"
     />
 
     <ASliderFormField
@@ -82,50 +102,6 @@ const lineJoinOptions: SelectOption[] = [
       id="perspective"
     />
 
-    <ASliderFormField
-      min={0}
-      max={256}
-      step={1}
-      value={64}
-      label="Steps"
-      name="steps"
-      id="steps"
-    />
-
-    <ASliderFormField
-      min={1}
-      max={8}
-      step={1}
-      value={3}
-      label="Colors"
-      name="colors"
-      id="colors"
-    />
-
-    <ASelectFormField
-      label="Lines Easing"
-      name="easing"
-      id="easing"
-      options={easingOptions}
-      value="Quadratic.InOut"
-    />
-
-    <ASelectFormField
-      label="Line Cap"
-      name="line-cap"
-      id="line-cap"
-      options={lineCapOptions}
-      value="round"
-    />
-
-    <ASelectFormField
-      label="Line Join"
-      name="line-join"
-      id="line-join"
-      options={lineJoinOptions}
-      value="round"
-    />
-
     <AColorFormField
       label="Background"
       name="background"
@@ -133,23 +109,51 @@ const lineJoinOptions: SelectOption[] = [
       value="#181818"
     />
 
-    <ASliderFormField
-      min={0}
-      max={16_000}
-      step={500}
-      value={2_000}
-      label="Animation Duration (ms)"
-      name="animation-duration"
-      id="animation-duration"
-    />
+    <SFormRow label="Line Style">
+      <ASelectFormField
+        label="Cap"
+        name="line-cap"
+        id="line-cap"
+        options={lineCapOptions}
+        value="round"
+      />
 
-    <ASelectFormField
-      label="Animation Easing"
-      name="animation-easing"
-      id="animation-easing"
-      options={easingOptions}
-      value="Quadratic.InOut"
-    />
+      <ASelectFormField
+        label="Join"
+        name="line-join"
+        id="line-join"
+        options={lineJoinOptions}
+        value="round"
+      />
+
+      <ASelectFormField
+        label="Easing"
+        name="easing"
+        id="easing"
+        options={easingOptions}
+        value="Quadratic.InOut"
+      />
+    </SFormRow>
+
+    <SFormRow label="Animation">
+      <ASliderFormField
+        min={64}
+        max={4096}
+        step={64}
+        value={640}
+        label="Duration (ms)"
+        name="animation-duration"
+        id="animation-duration"
+      />
+
+      <ASelectFormField
+        label="Easing"
+        name="animation-easing"
+        id="animation-easing"
+        options={easingOptions}
+        value="Quadratic.InOut"
+      />
+    </SFormRow>
   </form>
 
   <div class="preview">
@@ -164,7 +168,6 @@ const lineJoinOptions: SelectOption[] = [
   }
 
   const form = wrapper.querySelector<HTMLFormElement>('form')
-
 
   if (!form) {
     throw new Error('Could not get form element')
@@ -189,23 +192,37 @@ const lineJoinOptions: SelectOption[] = [
   })
 </script>
 
-<style>
+<style lang="scss">
+  @use "../../variables" as *;
+
   .OLineCanvasForm {
     display: flex;
-    flex-direction: row;
+    flex-direction: column-reverse;
     gap: var(--spacer-lg);
     width: 100%;
+
+    @include desktop {
+      flex-direction: row;
+    }
   }
 
   .form {
     display: flex;
     flex-direction: column;
     gap: var(--spacer-md);
-    width: 30%;
+    width: 100%;
+
+    @include desktop {
+      width: 30%;
+    }
   }
 
   .preview {
-    width: 70%;
+    width: 100%;
     height: 100%;
+
+    @include desktop {
+      width: 70%;
+    }
   }
 </style>

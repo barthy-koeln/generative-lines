@@ -3,6 +3,8 @@ import '../root.scss'
 import '@fontsource/ubuntu/latin-400.css'
 import '@fontsource/ubuntu/latin-700.css'
 import TPage from '../components/templates/TPage.astro'
+import ONavBar from '../components/organisms/ONavBar.astro'
+import OFooter from '../components/organisms/OFooter.astro'
 ---
 
 <html lang="en">
@@ -12,10 +14,6 @@ import TPage from '../components/templates/TPage.astro'
     rel="icon"
     type="image/svg+xml"
     href="/favicon.svg"
-  />
-  <link
-    rel="icon"
-    href="/favicon.ico"
   />
   <meta
     name="viewport"
@@ -29,6 +27,10 @@ import TPage from '../components/templates/TPage.astro'
 </head>
 <body>
 <TPage>
+  <ONavBar slot="header"/>
+
   <slot/>
+
+  <OFooter slot="footer"/>
 </TPage>
 </body>
