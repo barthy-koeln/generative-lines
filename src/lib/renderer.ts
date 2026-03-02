@@ -1,18 +1,19 @@
-import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
-import { createLines } from './generator.ts'
 import { createAnimationController } from './renderer/animation.ts'
 import { createDrawingController } from './renderer/drawing.ts'
+import { createStateController } from './renderer/state.ts'
 
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-  let config: Config
-  let state: RenderState
-
-  function getConfig () {
-    return config
-  }
-  function getState () {
-    return state
-  }
+  const {
+    initialize,
+    getConfig,
+    mergeConfig,
+    getState,
+    mergeState,
+    rerollLines
+  } = createStateController({
+    canvas,
+    context,
+  })
 
   const {
     clearCanvas,
@@ -32,11 +33,8 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     drawSegment,
   })
 
-  function rebuildLines () {
-    state.lines = createLines(config, state)
-  }
-
   function capture () {
+    const config = getConfig()
     const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
     clearCanvas()
 
@@ -51,96 +49,24 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     return imageData
   }
 
-  function configure (raw: RawConfig, existingState?: RenderState) {
-    config = resolveConfig(raw)
-
-    canvas.width = config.renderWidth
-    canvas.height = config.renderHeight
-    context.imageSmoothingEnabled = false
-    canvas.style.background = config.background.hex()
-    // Precedence: Incoming one, existing one, or new random one if not provided
-    state = existingState ?? state ?? createRenderState(config)
-    rebuildLines()
-  }
-
-  function updateConfig (newConfig: Partial<Config>) {
-    config = {
-      ...config,
-      ...newConfig,
-    }
-
-    let needsReroll = false
-    let needsRebuild = false
-    for (const [key, value] of Object.entries(newConfig)) {
-      if (value === undefined) {
-        continue
-      }
-
-      if (['renderWidth', 'renderHeight'].includes(key)) {
-        canvas.width = config.renderWidth
-        canvas.height = config.renderHeight
-      }
-
-      if (['steps', 'colors'].includes(key)) {
-        needsReroll = true
-        needsRebuild = true
-      }
-
-      if (['background'].includes(key)) {
-        canvas.style.background = config.background.hex()
-      }
-
-      if (['distance', 'amplitude', 'thickness', 'lines', 'paddingX', 'paddingY', 'perspective', 'easing'].includes(key)) {
-        needsRebuild = true
-      }
-
-      if (['animationDuration', 'animationEasing'].includes(key)) {
-        // TODO restart animation
-      }
-    }
-
-    if (needsReroll) {
-      state = createRenderState(config)
-    }
-
-    if (needsRebuild) {
-      rebuildLines()
-    }
-
-    redrawFull()
-  }
-
-  function updateState (newState: Partial<RenderState>) {
-    state = {
-      ...state,
-      ...newState,
-    }
-    rebuildLines()
-  }
-
-  function reroll () {
-    state = createRenderState(config)
-    rebuildLines()
-  }
-
   return {
     get config () {
-      return config
+      return getConfig()
     },
     set config (newConfig) {
-      updateConfig(newConfig)
+      mergeConfig(newConfig)
     },
     get state () {
-      return state
+      return getState()
     },
     set state (newState) {
-      updateState(newState)
+      mergeState(newState)
     },
-    configure,
+    configure: initialize,
     ...animator,
-    updateConfig,
-    updateState,
-    reroll,
+    updateConfig: mergeConfig,
+    updateState: mergeState,
+    reroll: rerollLines,
     capture,
     redraw: redrawFull,
     clear: clearCanvas,

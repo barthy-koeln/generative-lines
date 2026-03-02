@@ -18,24 +18,6 @@ mutable state.
 
 ## Proposed Split
 
-### 2. `src/lib/renderer/drawing.ts`
-
-**Responsibility**: Canvas drawing primitives only
-
-- `_setDrawingStyle` → `applyDrawingStyle`
-- `_draw` → `drawSegment`
-- `clear` → `clearCanvas`
-- `redraw` → `drawFull`
-
-### 3. `src/lib/renderer/state.ts`
-
-**Responsibility**: Configuration and state management
-
-- `configure` → `initialize`
-- `updateConfig` → `mergeConfig`
-- `updateState` → `mergeState`
-- `reroll` → `rerollLines`
-
 ### 4. `src/lib/renderer/capture.ts`
 
 **Responsibility**: Screenshot functionality
