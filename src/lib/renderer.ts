@@ -1,16 +1,23 @@
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
 import { createLines } from './generator.ts'
-import type { AnimationConfig, Line, Milliseconds } from './types'
-import { Tween } from '@tweenjs/tween.js'
+import type { Line } from './types'
 import { createGradient } from './utils/colors.ts'
-import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
+import { createAnimationController } from './renderer/animation.ts'
 
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-  const tweenGroup = new AutoplayTweenGroup()
-
   let lines: Line[]
   let config: Config
   let state: RenderState
+
+  function getConfig () {
+    return config
+  }
+
+  const animator = createAnimationController({
+    getConfig,
+    clearCanvas: clear,
+    drawSegment: _draw,
+  })
 
   function rebuildLines () {
     lines = createLines(config, state)
@@ -26,21 +33,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     context.lineWidth = config.thickness
     context.lineCap = config.lineCap
     context.lineJoin = config.lineJoin
-  }
-
-  function _createTween ({ from, to }: AnimationConfig): Tween {
-    const tween: Tween = new Tween({ start: from[0], end: from[1] })
-      .to({ start: to[0], end: to[1] })
-      .duration(config.animationDuration)
-      .easing(config.animationEasing)
-
-    tween
-      .onUpdate(({ start, end }: { start: number, end: number }) => {
-        clear()
-        _draw(start, end)
-      })
-
-    return tween
   }
 
   function _draw (from: number, to: number) {
@@ -59,59 +51,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
 
       context.stroke()
     }
-  }
-
-  function animate (animationConfig: AnimationConfig): Promise<void> {
-    _setDrawingStyle()
-
-    return new Promise((resolve) => {
-      const tween = _createTween(animationConfig)
-      tweenGroup.removeAll()
-      tweenGroup.add(tween)
-
-      tween
-        .onComplete(() => resolve())
-        .start()
-    })
-  }
-
-  function animateIn (): Promise<void> {
-    return animate({ from: [0, 0], to: [0, 1] })
-  }
-
-  function animateBackOut (): Promise<void> {
-    return animate({ from: [0, 1], to: [0, 0] })
-  }
-
-  function animateWipeOut (): Promise<void> {
-    return animate({ from: [0, 1], to: [1, 1] })
-  }
-
-  function animateLoop (
-    holdAfterIn: Milliseconds = 1000,
-    holdAfterOut: Milliseconds = 300,
-    inConfig: AnimationConfig = { from: [0, 0], to: [0, 1] },
-    outConfig: AnimationConfig = { from: [0, 1], to: [1, 1] }
-  ) {
-    _setDrawingStyle()
-
-    const animateIn = _createTween(inConfig)
-    const animateOut = _createTween(outConfig)
-    const animateInFollow = _createTween(inConfig)
-
-    animateIn
-      .chain(animateOut)
-    animateOut
-      .delay(holdAfterIn)
-      .chain(animateInFollow)
-    animateInFollow
-      .delay(holdAfterOut)
-      .chain(animateOut)
-
-    tweenGroup.removeAll()
-    tweenGroup.add(animateIn, animateOut, animateInFollow)
-
-    animateIn.start()
   }
 
   function clear () {
@@ -225,11 +164,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       updateState(newState)
     },
     configure,
-    animate,
-    animateIn,
-    animateBackOut,
-    animateWipeOut,
-    animateLoop,
+    ...animator,
     updateConfig,
     updateState,
     reroll,
