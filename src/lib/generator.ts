@@ -60,7 +60,12 @@ export function createLines (
   for (let lineIndex = 0; lineIndex < config.lines; lineIndex++) {
     const scale = 1 - lineIndex * config.perspective
     const scaledPixelsPerStep = scale * pixelsPerStep
-    const offsetX = config.paddingX + (innerWidth - scale * innerWidth) / 2
+
+    /**
+     * Offset the line to center it horizontally.
+     * We center this within the original innerWidth.
+     */
+    const offsetX = config.paddingX + (innerWidth - scaledPixelsPerStep * (state.steps.length - 1)) / 2
     const offsetY = centerOffset + config.paddingY + lineIndex * config.distance
 
     const offsetPoints: Line = baseLine.map(([x, y]) => [
