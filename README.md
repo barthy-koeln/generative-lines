@@ -12,5 +12,5 @@ I wrote this to explore:
 ## Using it
 
 ```shell
-npm add lines-canvascqqqq
+npm add lines-canvas
 ```

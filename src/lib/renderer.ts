@@ -119,6 +119,21 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     _draw(0, 1)
   }
 
+  function capture() {
+    const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
+    clear()
+
+    context.fillStyle = config.background.hex()
+    context.fillRect(0, 0, config.renderWidth, config.renderHeight)
+    _setDrawingStyle()
+    _draw(0, 1)
+
+    const imageData = canvas.toDataURL('image/png')
+    context.putImageData(currentState, 0, 0)
+
+    return imageData
+  }
+
   function configure (raw: RawConfig, existingState?: RenderState) {
     config = resolveConfig(raw)
 
@@ -213,6 +228,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     updateConfig,
     updateState,
     reroll,
+    capture,
     redraw,
     clear,
   }

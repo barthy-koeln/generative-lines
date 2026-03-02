@@ -70,6 +70,7 @@ import Layout from '../layouts/Layout.astro'
         continue
       }
 
+
       const linesCanvas: Element = entry.target
       if (!(linesCanvas instanceof LinesCanvas)) {
         throw new Error('Entry target is not a LinesCanvas element')
