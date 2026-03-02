@@ -1,5 +1,5 @@
 import { ATTRIBUTE_TO_KEY, parseAllAttributes, parseSingleAttribute, } from './config-schema.ts'
-import { useRenderer } from './renderer.ts'
+import { type Renderer, useRenderer } from './renderer.ts'
 import { DEFAULT_RAW_CONFIG, type RawConfig } from './config.ts'
 
 export interface LinesCanvasAttributes extends RawConfig {
@@ -12,15 +12,15 @@ export class LinesCanvas extends HTMLElement {
   private isBatchUpdating: boolean = false
 
   public canvas: HTMLCanvasElement
-  public ctx: CanvasRenderingContext2D
-  public renderer: ReturnType<typeof useRenderer>
+  public context: CanvasRenderingContext2D
+  public renderer: Renderer
   public isMounted: boolean = false
 
   constructor () {
     super()
     this.canvas = document.createElement('canvas')
-    this.ctx = this.canvas.getContext('2d')!
-    this.renderer = useRenderer(this.canvas, this.ctx)
+    this.context = this.canvas.getContext('2d')!
+    this.renderer = useRenderer(this.canvas, this.context)
 
     Object.assign(this.canvas.style, {
       width: '100%',
