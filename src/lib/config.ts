@@ -2,7 +2,7 @@ import { Easing } from '@tweenjs/tween.js'
 import chroma, { type Color } from 'chroma-js'
 import { fillArray } from './utils/array.ts'
 import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
-import type { EasingFunction, Integer, Milliseconds, Normalized, Pixels } from './types'
+import type { EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
 
 export interface Config {
   renderWidth: Pixels
@@ -27,6 +27,8 @@ export interface Config {
 export interface RenderState {
   steps: Normalized[]
   colors: Color[]
+  lines: Line[]
+
 }
 
 /**
@@ -110,6 +112,7 @@ export function createRenderState (config: Config): RenderState {
   return {
     steps: fillArray(config.steps, getRandomFloat),
     colors: fillArray(config.colors, getRandomColor),
+    lines: fillArray(config.lines, () => [])
   }
 }
 
