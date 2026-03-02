@@ -1,76 +1,49 @@
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
 import { createLines } from './generator.ts'
-import type { Line } from './types'
-import { createGradient } from './utils/colors.ts'
 import { createAnimationController } from './renderer/animation.ts'
+import { createDrawingController } from './renderer/drawing.ts'
 
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-  let lines: Line[]
   let config: Config
   let state: RenderState
 
   function getConfig () {
     return config
   }
+  function getState () {
+    return state
+  }
+
+  const {
+    clearCanvas,
+    drawSegment,
+    applyDrawingStyle,
+    redrawFull,
+  } = createDrawingController({
+    getConfig,
+    getState,
+    context,
+  })
 
   const animator = createAnimationController({
     getConfig,
-    clearCanvas: clear,
-    drawSegment: _draw,
+    applyDrawingStyle,
+    clearCanvas,
+    drawSegment,
   })
 
   function rebuildLines () {
-    lines = createLines(config, state)
-  }
-
-  function _setDrawingStyle () {
-    clear()
-
-    context.fillStyle = 'transparent'
-    context.strokeStyle = state.colors.length > 1
-      ? createGradient(context, config.paddingX, config.renderWidth - (2 * config.paddingX), state.colors)
-      : state.colors[0].hex()
-    context.lineWidth = config.thickness
-    context.lineCap = config.lineCap
-    context.lineJoin = config.lineJoin
-  }
-
-  function _draw (from: number, to: number) {
-    for (const points of lines) {
-      const pixels: number = points.length - 1
-      const fromPixel = Math.floor(from * pixels)
-      const toPixel = Math.floor(to * pixels)
-
-      context.beginPath()
-      context.moveTo(points[fromPixel][0], points[fromPixel][1])
-
-      for (let pixel = fromPixel; pixel < toPixel; pixel++) {
-        const targetPoint = points[pixel + 1]
-        context.lineTo(targetPoint[0], targetPoint[1])
-      }
-
-      context.stroke()
-    }
-  }
-
-  function clear () {
-    context.clearRect(0, 0, canvas.width, canvas.height)
-  }
-
-  function redraw () {
-    clear()
-    _setDrawingStyle()
-    _draw(0, 1)
+    state.lines = createLines(config, state)
   }
 
   function capture () {
     const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
-    clear()
+    clearCanvas()
 
     context.fillStyle = config.background.hex()
     context.fillRect(0, 0, config.renderWidth, config.renderHeight)
-    _setDrawingStyle()
-    _draw(0, 1)
+    applyDrawingStyle()
+    drawSegment(0, 1)
 
     const imageData = canvas.toDataURL('image/png')
     context.putImageData(currentState, 0, 0)
@@ -134,7 +107,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       rebuildLines()
     }
 
-    redraw()
+    redrawFull()
   }
 
   function updateState (newState: Partial<RenderState>) {
@@ -169,8 +142,8 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     updateState,
     reroll,
     capture,
-    redraw,
-    clear,
+    redraw: redrawFull,
+    clear: clearCanvas,
   }
 }
 

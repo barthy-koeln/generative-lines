@@ -5,6 +5,7 @@ import { AutoplayTweenGroup } from '../autoplay-tween-group.ts'
 
 export interface AnimationControllerParams {
   getConfig: () => Config,
+  applyDrawingStyle: () => void,
   clearCanvas: () => void,
   drawSegment: (from: NormalizedPositive, to: NormalizedPositive) => void
 }
@@ -15,6 +16,7 @@ export interface AnimationControllerParams {
  */
 export function createAnimationController ({
   getConfig,
+  applyDrawingStyle,
   clearCanvas,
   drawSegment,
 }: AnimationControllerParams) {
@@ -25,6 +27,7 @@ export function createAnimationController ({
 
     const tween: Tween = new Tween({ start: from[0], end: from[1] })
       .to({ start: to[0], end: to[1] })
+      .onEveryStart(applyDrawingStyle)
       .duration(config.animationDuration)
       .easing(config.animationEasing)
 
