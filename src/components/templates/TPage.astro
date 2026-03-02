@@ -1,7 +1,12 @@
 ---
+export interface Props {
+  dark: boolean;
+}
+
+const { dark } = Astro.props;
 ---
 
-<div class="TPage">
+<div class:list={['TPage', { '-dark': dark }]}>
   <slot name="header"/>
   <main>
     <slot/>
@@ -16,6 +21,10 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+
+  .-dark {
+    background-color: var(--color-black);
   }
 
   main {
