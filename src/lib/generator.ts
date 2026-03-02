@@ -28,14 +28,22 @@ function getEasedCurvePoints (points: Line, easingFunction: EasingFunction): Lin
   return renderPoints
 }
 
+/**
+ * Generate lines based on the provided configuration and render state.
+ * First generates base points for each line, then applies perspective scaling and easing to create the final renderable lines.
+ *
+ * The output is an array of lines, where each line is an array of points, and each point is a tuple of [x, y] coordinates.
+ * Each line has exactly as many points as pixels it renders horizontally, ensuring smooth rendering when animating.
+ *
+ * @param config
+ * @param state
+ */
 export function createLines (
   config: Config,
-  state: RenderState,
-  width: number,
-  height: number,
+  state: RenderState
 ) {
-  const innerWidth = width - 2 * config.paddingX
-  const innerHeight = height - 2 * config.paddingY
+  const innerWidth = config.renderWidth - 2 * config.paddingX
+  const innerHeight = config.renderHeight - 2 * config.paddingY
   const pixelsPerStep = Math.floor(innerWidth / (state.steps.length - 1))
 
   const totalHeight = config.distance * (config.lines - 1) + config.amplitude

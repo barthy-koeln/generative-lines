@@ -1,6 +1,6 @@
 import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from './config.ts'
 import { createLines } from './generator.ts'
-import type { Line, Milliseconds } from './types'
+import type { AnimationConfig, Line, Milliseconds } from './types'
 import { Tween } from '@tweenjs/tween.js'
 import { createGradient } from './utils/colors.ts'
 import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
@@ -13,7 +13,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
   let state: RenderState
 
   function rebuildLines () {
-    lines = createLines(config, state, canvas.width, canvas.height)
+    lines = createLines(config, state)
   }
 
   function _setDrawingStyle () {
@@ -28,7 +28,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     context.lineJoin = config.lineJoin
   }
 
-  function _createTween (from: number[], to: number[]): Tween {
+  function _createTween ({ from, to }: AnimationConfig): Tween {
     const tween: Tween = new Tween({ start: from[0], end: from[1] })
       .to({ start: to[0], end: to[1] })
       .duration(config.animationDuration)
@@ -61,11 +61,11 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     }
   }
 
-  function animate(from: number[], to: number[]): Promise<void> {
+  function animate (animationConfig: AnimationConfig): Promise<void> {
     _setDrawingStyle()
 
     return new Promise((resolve) => {
-      const tween = _createTween(from, to)
+      const tween = _createTween(animationConfig)
       tweenGroup.removeAll()
       tweenGroup.add(tween)
 
@@ -76,23 +76,28 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
   }
 
   function animateIn (): Promise<void> {
-    return animate([0, 0], [0, 1])
+    return animate({ from: [0, 0], to: [0, 1] })
   }
 
   function animateBackOut (): Promise<void> {
-    return animate([0, 1], [0, 0])
+    return animate({ from: [0, 1], to: [0, 0] })
   }
 
   function animateWipeOut (): Promise<void> {
-    return animate([0, 1], [1, 1])
+    return animate({ from: [0, 1], to: [1, 1] })
   }
 
-  function animateLoop (holdAfterIn: Milliseconds = 1000, holdAfterOut: Milliseconds = 300) {
+  function animateLoop (
+    holdAfterIn: Milliseconds = 1000,
+    holdAfterOut: Milliseconds = 300,
+    inConfig: AnimationConfig = { from: [0, 0], to: [0, 1] },
+    outConfig: AnimationConfig = { from: [0, 1], to: [1, 1] }
+  ) {
     _setDrawingStyle()
 
-    const animateIn = _createTween([0, 0], [0, 1])
-    const animateOut = _createTween([0, 1], [1, 1])
-    const animateInFollow = _createTween([0, 0], [0, 1])
+    const animateIn = _createTween(inConfig)
+    const animateOut = _createTween(outConfig)
+    const animateInFollow = _createTween(inConfig)
 
     animateIn
       .chain(animateOut)
@@ -119,7 +124,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     _draw(0, 1)
   }
 
-  function capture() {
+  function capture () {
     const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
     clear()
 
@@ -233,3 +238,5 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     clear,
   }
 }
+
+export type Renderer = ReturnType<typeof useRenderer>
