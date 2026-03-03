@@ -12,7 +12,7 @@ I wrote this to explore:
 ## Quickstart
 
 ```shell
-npm add lines-canvas
+npm install --save generative-lines
 ```
 
 ```javascript
