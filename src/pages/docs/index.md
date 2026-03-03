@@ -12,7 +12,7 @@ description: "Documentation for the generative-lines library."
 ## Quickstart
 
 ```shell
-npm add lines-canvas
+npm install --save generative-lines
 ```
 
 ```javascript

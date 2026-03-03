@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+rsync -avz dist/ barthy@barthy.koeln:/home/barthy/architecture-public/caddy/static/generative-lines --exclude=.DS_Store
