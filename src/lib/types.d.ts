@@ -48,6 +48,11 @@ export type Milliseconds = number
 export type Normalized = number
 
 /**
+ * Any parseable CSS color string (e.g. hex, rgb, hsl, color names)
+ */
+export type CSSColor = string
+
+/**
  * Normalized value between 0 and 1
  */
 export type NormalizedPositive = number

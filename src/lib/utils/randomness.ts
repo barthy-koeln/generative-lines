@@ -1,8 +1,11 @@
-import chroma, { type Color } from 'chroma-js'
 import type { Normalized } from '../types'
 
-export function getRandomColor (): Color {
-  return chroma.random().set('hsl.l', 0.6).saturate(2)
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
+export function getRandomColor (): string {
+  return `hsl(${getRandomInt(360)} 100% 50%)`
 }
 
 export function getRandomFloat (): Normalized {

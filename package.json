@@ -1,5 +1,5 @@
 {
-  "name": "generative-lines-astro",
+  "name": "generative-lines",
   "type": "module",
   "license": "MIT",
   "version": "0.0.1",
@@ -7,19 +7,25 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "prepack": "unbuild"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.mjs"
+    }
   },
   "dependencies": {
-    "chroma-js": "^3.2.0",
-    "tween.js": "^16.6.0"
+    "@tweenjs/tween.js": "^25.0.0"
   },
   "devDependencies": {
-    "@types/chroma-js": "^3.1.2",
-    "sass-embedded": "^1.97.3",
-    "unbuild": "^3.6.1",
     "@fontsource-variable/red-hat-mono": "^5.2.8",
     "@fontsource/ubuntu": "^5.2.8",
+    "@types/chroma-js": "^3.1.2",
     "@types/tween.js": "^18.6.1",
-    "astro": "5.18.0"
+    "astro": "5.18.0",
+    "sass-embedded": "^1.97.3",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1"
   }
 }

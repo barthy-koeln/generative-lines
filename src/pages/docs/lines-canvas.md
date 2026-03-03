@@ -44,26 +44,26 @@ customElements.define('lines-canvas', LinesCanvas)
 
 ### Attribute Reference
 
-| Attribute            | Type                      | Default               | Description                                                                                                       |
-|----------------------|---------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------|
-| `render-width`       | `int`                     | `canvas.offsetWidth`  | Canvas render width in pixels                                                                                     |
-| `render-height`      | `int`                     | `canvas.offsetHeight` | Canvas render height in pixels                                                                                    |
-| `steps`              | `int`                     | 12                    | Number of steps in the line                                                                                       |
-| `colors`             | `int`                     | 3                     | Number of gradient colors                                                                                         |
-| `distance`           | `int`                     | 12                    | Vertical distance between lines                                                                                   |
-| `amplitude`          | `int`                     | 32                    | Maximum Y variation                                                                                               |
-| `thickness`          | `int`                     | 2                     | Line stroke width                                                                                                 |
-| `lines`              | `int`                     | 12                    | Number of parallel lines                                                                                          |
-| `padding-x`          | `int`                     | 20                    | Horizontal padding                                                                                                |
-| `padding-y`          | `int`                     | 20                    | Vertical padding                                                                                                  |
-| `perspective`        | `float`                   | -0.02                 | Perspective scaling factor                                                                                        |
-| `easing`             | tween.js easing           | `Cubic.InOut`         | Easing function ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))                      |
-| `background`         | `string`                  | `transparent`         | Background color (hex, named, etc.)                                                                               |
-| `animation-duration` | `int`                     | 0                     | Animation duration in ms                                                                                          |
-| `animation-easing`   | tween.js easing           | `Cubic.InOut `        | Animation easing function  ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))           |
-| `line-cap`           | `butt`, `round`, `square` | `round`               | Line end cap style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap)) |
-| `line-join`          | `round`, `bevel`, `miter` | `round`               | Line join style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin))   |
-| `autoplay`           | `true`, `loop`, `false`   | `false`               | Animation mode                                                                                                    |
+| Attribute            | Type                      | Default               | Description                                                                                                           |
+|----------------------|---------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `render-width`       | `int`                     | `canvas.offsetWidth`  | Canvas render width in pixels                                                                                         |
+| `render-height`      | `int`                     | `canvas.offsetHeight` | Canvas render height in pixels                                                                                        |
+| `steps`              | `int`                     | 12                    | Number of steps in the line                                                                                           |
+| `colors`             | `int`                     | 3                     | Number of gradient colors                                                                                             |
+| `distance`           | `int`                     | 12                    | Vertical distance between lines                                                                                       |
+| `amplitude`          | `int`                     | 32                    | Maximum Y variation                                                                                                   |
+| `thickness`          | `int`                     | 2                     | Line stroke width                                                                                                     |
+| `lines`              | `int`                     | 12                    | Number of parallel lines                                                                                              |
+| `padding-x`          | `int`                     | 20                    | Horizontal padding                                                                                                    |
+| `padding-y`          | `int`                     | 20                    | Vertical padding                                                                                                      |
+| `perspective`        | `float`                   | -0.02                 | Perspective scaling factor                                                                                            |
+| `easing`             | tween.js easing           | `Cubic.InOut`         | Easing function ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))                          |
+| `background`         | `string`                  | `transparent`         | Background color (CSSColor, [MDN ref](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value)) |
+| `animation-duration` | `int`                     | 0                     | Animation duration in ms                                                                                              |
+| `animation-easing`   | tween.js easing           | `Cubic.InOut `        | Animation easing function  ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))               |
+| `line-cap`           | `butt`, `round`, `square` | `round`               | Line end cap style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap))     |
+| `line-join`          | `round`, `bevel`, `miter` | `round`               | Line join style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin))       |
+| `autoplay`           | `true`, `loop`, `false`   | `false`               | Animation mode                                                                                                        |
 
 ## Animation Modes
 
@@ -72,6 +72,7 @@ customElements.define('lines-canvas', LinesCanvas)
 Plays a single animation from left to right on mount. Dispatches `animated-in` event when complete.
 
 ```html
+
 <lines-canvas
   autoplay="true"
   id="myCanvas"
@@ -89,6 +90,7 @@ Plays a single animation from left to right on mount. Dispatches `animated-in` e
 Continuously loops the animation with hold periods.
 
 ```html
+
 <lines-canvas autoplay="loop"></lines-canvas>
 ```
 
@@ -97,6 +99,7 @@ Continuously loops the animation with hold periods.
 No animation. Lines are drawn statically.
 
 ```html
+
 <lines-canvas autoplay="false"></lines-canvas>
 ```
 

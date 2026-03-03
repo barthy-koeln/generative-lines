@@ -1,8 +1,7 @@
 import { Easing } from '@tweenjs/tween.js'
-import chroma, { type Color } from 'chroma-js'
 import { fillArray } from './utils/array.ts'
 import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
-import type { EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
+import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
 
 export interface Config {
   renderWidth: Pixels
@@ -17,7 +16,7 @@ export interface Config {
   steps: Integer
   colors: Integer
   easing: EasingFunction
-  background: Color
+  background: string
   animationDuration: Milliseconds
   animationEasing: EasingFunction
   lineCap: CanvasLineCap
@@ -26,7 +25,7 @@ export interface Config {
 
 export interface RenderState {
   steps: Normalized[]
-  colors: Color[]
+  colors: CSSColor[]
   lines: Line[]
 
 }
@@ -48,7 +47,7 @@ export interface RawConfig {
   steps: Integer
   colors: Integer
   easing: string
-  background: string
+  background: CSSColor
   animationDuration: Milliseconds
   animationEasing: string,
   lineCap: CanvasLineCap
@@ -80,7 +79,7 @@ export function resolveConfig (raw: RawConfig): Config {
     steps: raw.steps,
     colors: raw.colors,
     easing: getEasingByString(raw.easing),
-    background: chroma(raw.background),
+    background: raw.background,
     animationDuration: raw.animationDuration,
     animationEasing: getEasingByString(raw.animationEasing),
     lineCap: raw.lineCap,
@@ -94,10 +93,6 @@ export function resolveConfig (raw: RawConfig): Config {
 export function resolveField<T extends keyof Config> (key: T, raw: Partial<RawConfig>): Config[T] {
   if (key === 'easing' && typeof raw.easing === 'string') {
     return getEasingByString(raw.easing) as Config[T]
-  }
-
-  if (key === 'background' && typeof raw.background === 'string') {
-    return chroma(raw.background) as Config[T]
   }
 
   if (key === 'animationEasing' && typeof raw.animationEasing === 'string') {
