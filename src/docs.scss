@@ -1,0 +1,30 @@
+.astro-code {
+  padding: var(--spacer);
+}
+
+code {
+  font-family: 'Red Hat Mono Variable', monospace;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacer);
+}
+
+td, th {
+  border: 1px solid var(--color-accent-dark);
+  padding: var(--spacer);
+  text-align: start;
+}
+
+thead {
+  background: var(--color-accent);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+th {
+  border: 1px solid var(--color-accent-dark);
+}

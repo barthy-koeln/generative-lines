@@ -1,0 +1,104 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: "How to Use the Renderer Module"
+description: "Reference documentation for the Renderer module, including architecture, API, configuration flow, animation modes, and state management."
+---
+
+# Renderer
+
+The `renderer` module provides a canvas-based animation system for rendering generative line art. It wraps the Canvas 2D API with a modular controller architecture that handles configuration, drawing, animation, and state management.
+
+## Quick Start
+
+```typescript
+import { useRenderer } from 'generative-lines'
+
+const canvas = document.createElement('canvas')
+const context = canvas.getContext('2d')
+const renderer = useRenderer(canvas, context)
+
+renderer.initialize({
+  renderWidth: 800,
+  renderHeight: 600,
+  steps: 10,
+  colors: 3,
+})
+
+renderer.animateLoop()
+```
+
+## Core API
+
+### `useRenderer(canvas, context)`
+
+Factory function that returns a renderer controller.
+
+**Parameters:**
+
+| Name      | Type                       | Description               |
+|-----------|----------------------------|---------------------------|
+| `canvas`  | `HTMLCanvasElement`        | Canvas element to draw on |
+| `context` | `CanvasRenderingContext2D` | 2D rendering context      |
+
+```typescript
+interface Renderer {
+  // Getters/Setters
+  config: Config
+  state: RenderState
+
+  // Initialization
+  initialize(rawConfig: RawConfig, existingState?: RenderState): void
+
+  // Configuration Updates
+  mergeConfig(newConfig: Partial<Config>): void
+  mergeState(newState: Partial<RenderState>): void
+
+  // State Manipulation
+  rerollLines(): void
+  rerollColors(): void
+
+  // Rendering
+  drawFull(): void
+  clearCanvas(): void
+  captureImage(): string
+
+  // Animation
+  animate(animationConfig: AnimationConfig): Promise<void>
+  animateIn(): Promise<void>
+  animateBackOut(): Promise<void>
+  animateWipeOut(): Promise<void>
+  animateLoop(
+    holdAfterIn?: Milliseconds,
+    holdAfterOut?: Milliseconds,
+    inConfig?: AnimationConfig,
+    outConfig?: AnimationConfig
+  ): void
+}
+```
+
+## Animation Modes
+
+Simple animations tween from a start rendering range to an end rendering range:
+
+| Method                     | Description                                  | Tween Range                                     |
+|----------------------------|----------------------------------------------|-------------------------------------------------|
+| `animateIn()`              | Draw lines from left to right                | `[0, 0] → [0, 1]`                               |
+| `animateBackOut()`         | Erase lines from right to left               | `[0, 1] → [0, 0]`                               |
+| `animateWipeOut()`         | Erase lines from left to right               | `[0, 1] → [1, 1]`                               |
+| `animateLoop()`            | Continuous loop with hold periods and config | `[0,0]→[0,1]→[1,1]→[0,0]...`                    |
+| `animate(AnimationConfig)` | Whatever ranges you like                     | Example:<br/>`{ from: [0, 0.5], to: [0.5, 1] }` |
+
+## State Management
+
+When updating config via `mergeConfig()`, the renderer determines what needs to be rebuilt:
+
+| Config Change                               | Action                  |
+|---------------------------------------------|-------------------------|
+| `renderWidth`, `renderHeight`               | Resize canvas           |
+| `background`, `line-cap`, `line-join`       | Restyle lines           |
+| `thickness`                                 | Restyle + rebuild lines |
+| `colors`                                    | Reroll colors + restyle |
+| `steps`                                     | Reroll lines + rebuild  |
+| `distance`, `amplitude`, `paddingX/Y`, etc. | Rebuild lines only      |
+
+Note: `animationDuration` and `animationEasing` changes do not restart ongoing animations.

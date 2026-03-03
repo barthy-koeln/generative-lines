@@ -57,7 +57,7 @@ export function createDrawingController ({
     context.clearRect(0, 0, config.renderWidth, config.renderHeight)
   }
 
-  function redrawFull (): void {
+  function drawFull (): void {
     clearCanvas()
     applyDrawingStyle()
     drawSegment(0, 1)
@@ -83,7 +83,7 @@ export function createDrawingController ({
     applyDrawingStyle,
     drawSegment,
     clearCanvas,
-    redrawFull,
+    drawFull,
     captureImage
   }
 }
