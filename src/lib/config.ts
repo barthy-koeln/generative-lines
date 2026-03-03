@@ -27,7 +27,6 @@ export interface RenderState {
   steps: Normalized[]
   colors: CSSColor[]
   lines: Line[]
-
 }
 
 /**
@@ -46,13 +45,29 @@ export interface RawConfig {
   perspective: Normalized
   steps: Integer
   colors: Integer
-  easing: string
+  easing: EasingString
   background: CSSColor
   animationDuration: Milliseconds
-  animationEasing: string,
+  animationEasing: EasingString,
   lineCap: CanvasLineCap
   lineJoin: CanvasLineJoin
 }
+
+export type EasingString =
+  `${keyof Omit<typeof Easing, 'Linear' | 'generatePow'>}.${'In' | 'Out' | 'InOut'}`
+  | `Linear.None`
+
+export const EASING_STRINGS: EasingString[] = Object.entries(Easing).flatMap(([easing, group]) => {
+  if (easing === 'Linear') {
+    return ['Linear.None']
+  }
+
+  if (easing === 'generatePow') {
+    return []
+  }
+
+  return Object.keys(group).map(option => `${easing}.${option}`)
+}) as EasingString[]
 
 function getEasingByString (easing: string): EasingFunction {
   const [type, method] = easing.split('.')
@@ -110,7 +125,6 @@ export function createRenderState (config: Config): RenderState {
     lines: fillArray(config.lines, () => [])
   }
 }
-
 
 export const DEFAULT_RAW_CONFIG: RawConfig = {
   renderWidth: 1024,
