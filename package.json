@@ -12,6 +12,7 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/lib/index.d.ts",
       "import": "./dist/lib/index.mjs"
     }
   },

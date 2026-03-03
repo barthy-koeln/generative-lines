@@ -2,15 +2,15 @@
 import ASliderFormField from '../atoms/ASliderFormField.astro'
 import AColorFormField from '../atoms/AColorFormField.astro'
 import ASelectFormField, { type SelectOption } from '../atoms/ASelectFormField.astro'
-import { Easing } from '@tweenjs/tween.js'
 import SFormRow from '../structures/SFormRow.astro'
+import { EASING_STRINGS, type EasingString } from '../../lib/config.ts'
 
-const easingOptions: SelectOption[] = Object.entries(Easing).flatMap(([easing, group]) => {
+const easingOptions: SelectOption[] = EASING_STRINGS.flatMap((easing: EasingString) => {
   return [
-    ...Object.keys(group).map(option => ({
-      value: `${easing}.${option}`,
-      label: `${easing} | ${option}`
-    }))
+    {
+      value: easing,
+      label: easing.replace('.', ' | ')
+    }
   ]
 })
 
