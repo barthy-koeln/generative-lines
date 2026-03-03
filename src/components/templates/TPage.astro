@@ -1,12 +1,13 @@
 ---
 export interface Props {
-  dark: boolean;
+  dark?: boolean;
+  center?: boolean;
 }
 
-const { dark } = Astro.props;
+const { dark = false, center = true } = Astro.props;
 ---
 
-<div class:list={['TPage', { '-dark': dark }]}>
+<div class:list={['TPage', { '-dark': dark, '-center': center }]}>
   <slot name="header"/>
   <main>
     <slot/>
@@ -23,12 +24,7 @@ const { dark } = Astro.props;
     flex-direction: column;
   }
 
-  .-dark {
-    background-color: var(--color-black);
-  }
-
   main {
-    align-items: center;
     color: var(--color-white);
     display: flex;
     flex-direction: column;
@@ -45,6 +41,16 @@ const { dark } = Astro.props;
 
     @media print {
       padding: var(--spacer-lg);
+    }
+  }
+
+  .-dark {
+    background-color: var(--color-black);
+  }
+
+  .-center {
+    main {
+      align-items: center;
     }
   }
 </style>

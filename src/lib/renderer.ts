@@ -24,7 +24,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     clearCanvas,
     drawSegment,
     applyDrawingStyle,
-    redrawFull,
+    drawFull,
     captureImage
   } = createDrawingController({
     getConfig,
@@ -92,7 +92,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       resizeCanvas()
     }
 
-    redrawFull()
+    drawFull()
   }
 
   return {
@@ -114,7 +114,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     rerollLines,
     rerollColors,
     captureImage,
-    redrawFull,
+    drawFull,
     clearCanvas,
     animate,
     animateIn,
