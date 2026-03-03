@@ -1,5 +1,11 @@
 {
   "name": "generative-lines",
+  "description": "Generative Art on HTML Canvas",
+  "keywords": [
+    "canvas",
+    "animations",
+    "generative art"
+  ],
   "type": "module",
   "license": "MIT",
   "version": "0.0.1",
@@ -13,9 +19,14 @@
   "exports": {
     ".": {
       "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/index.mjs"
-    }
+      "import": "./dist/lib/index.mjs",
+      "default": "./dist/lib/index.mjs"
+    },
+    "./package.json": "./package.json"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0"
   },
