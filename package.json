@@ -14,7 +14,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepack": "unbuild"
+    "build:lib": "unbuild"
   },
   "exports": {
     ".": {
