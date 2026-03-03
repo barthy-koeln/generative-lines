@@ -22,11 +22,11 @@ export function createDrawingController ({
     const state = getState()
 
     context.imageSmoothingEnabled = false
-    context.canvas.style.background = config.background.hex()
+    context.canvas.style.background = config.background
     context.fillStyle = 'transparent'
     context.strokeStyle = state.colors.length > 1
       ? createGradient(context, config.paddingX, config.renderWidth - (2 * config.paddingX), state.colors)
-      : state.colors[0].hex()
+      : state.colors[0]
     context.lineWidth = config.thickness
     context.lineCap = config.lineCap
     context.lineJoin = config.lineJoin
@@ -68,7 +68,7 @@ export function createDrawingController ({
     const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
     clearCanvas()
 
-    context.fillStyle = config.background.hex()
+    context.fillStyle = config.background
     context.fillRect(0, 0, config.renderWidth, config.renderHeight)
     applyDrawingStyle()
     drawSegment(0, 1)

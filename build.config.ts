@@ -2,14 +2,13 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/lib/lines-canvas',
-    'src/lib/renderer',
+    'src/lib/index'
   ],
   declaration: true,
   rollup: {
-    inlineDependencies: true,
+    inlineDependencies: false,
     esbuild: {
-      target: 'es2020',
+      target: 'esnext',
     },
   },
   hooks: {
