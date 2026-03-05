@@ -1,3 +1,5 @@
+/// <reference lib="DOM" />
+
 import { ATTRIBUTE_TO_KEY, parseAllAttributes, parseSingleAttribute, } from './config-schema.ts'
 import { type Renderer, useRenderer } from './renderer.ts'
 import { DEFAULT_RAW_CONFIG, type RawConfig } from './config.ts'
