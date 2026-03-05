@@ -1,4 +1,11 @@
-import { type Config, createRenderState, type RawConfig, type RenderState, resolveConfig } from '../config.ts'
+import {
+  type Config,
+  createRenderState,
+  DEFAULT_RAW_CONFIG,
+  type RawConfig,
+  type RenderState,
+  resolveConfig
+} from '../config.ts'
 import { createLines } from '../generator.ts'
 import type { Line } from '../types.ts'
 import { fillArray } from '../utils/array.ts'
@@ -27,8 +34,8 @@ export function createStateController ({
     canvas.height = config.renderHeight
   }
 
-  function initialize (rawConfig: RawConfig, existingState?: RenderState): void {
-    config = resolveConfig(rawConfig)
+  function initialize (rawConfig: Partial<RawConfig>, existingState?: RenderState): void {
+    config = resolveConfig({ ...DEFAULT_RAW_CONFIG, ...rawConfig })
     resizeCanvas()
 
     // Precedence: Incoming one, existing one, or new random one if not provided

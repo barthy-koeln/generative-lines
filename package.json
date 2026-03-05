@@ -21,10 +21,20 @@
     "build:lib": "unbuild"
   },
   "exports": {
-    ".": {
-      "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/index.mjs",
-      "default": "./dist/lib/index.mjs"
+    "./config": {
+      "types": "./dist/lib/config.d.ts",
+      "import": "./dist/lib/config.mjs",
+      "default": "./dist/lib/config.mjs"
+    },
+    "./lines-canvas": {
+      "types": "./dist/lib/lines-canvas.d.ts",
+      "import": "./dist/lib/lines-canvas.mjs",
+      "default": "./dist/lib/lines-canvas.mjs"
+    },
+    "./renderer": {
+      "types": "./dist/lib/renderer.d.ts",
+      "import": "./dist/lib/renderer.mjs",
+      "default": "./dist/lib/renderer.mjs"
     },
     "./package.json": "./package.json"
   },

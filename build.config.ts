@@ -2,7 +2,9 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/lib/index'
+    'src/lib/config',
+    'src/lib/renderer',
+    'src/lib/lines-canvas',
   ],
   declaration: true,
   rollup: {
