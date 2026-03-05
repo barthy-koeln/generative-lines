@@ -16,7 +16,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     resizeCanvas
   } = createStateController({
     canvas,
-    context,
     onConfigChange
   })
 
@@ -37,18 +36,20 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateIn,
     animateBackOut,
     animateWipeOut,
-    animateLoop
+    animateLoop,
+    updateAnimation,
   } = createAnimationController({
     getConfig,
     applyDrawingStyle,
     clearCanvas,
-    drawSegment,
+    drawSegment
   })
 
-  function onConfigChange (newConfig: Partial<Config>, config: Config): void {
+  function onConfigChange (newConfig: Partial<Config>): void {
     let needsRebuild = false
     let needsRestyle = false
     let needsResize = false
+    let needsAnimationUpdate = false
 
     for (const [key, value] of Object.entries(newConfig)) {
       if (value === undefined) {
@@ -78,6 +79,11 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       if (['background', 'thickness', 'line-cap', 'line-join'].includes(key)) {
         needsRestyle = true
       }
+
+      if (['animationDuration', 'animationEasing'].includes(key)) {
+        // No need to trigger a full redraw for animation config changes
+        needsAnimationUpdate = true
+      }
     }
 
     if (needsRestyle) {
@@ -90,6 +96,10 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
 
     if (needsResize) {
       resizeCanvas()
+    }
+
+    if (needsAnimationUpdate) {
+      updateAnimation()
     }
 
     drawFull()

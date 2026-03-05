@@ -66,7 +66,6 @@ export class LinesCanvas extends HTMLElement {
     const update = parseSingleAttribute(this, name)
     if (!update) {
       // Unknown attribute
-      console.info(`Unknown attribute "${name}" changed, skipping update.`)
       return
     }
 

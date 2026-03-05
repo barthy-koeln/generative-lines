@@ -1,7 +1,6 @@
 import type { Config } from '../config.ts'
 import type { AnimationConfig, Milliseconds, NormalizedPositive } from '../types.ts'
 import { Tween } from '@tweenjs/tween.js'
-import { AutoplayTweenGroup } from '../autoplay-tween-group.ts'
 
 export interface AnimationControllerParams {
   getConfig: () => Config,
@@ -18,9 +17,17 @@ export function createAnimationController ({
   getConfig,
   applyDrawingStyle,
   clearCanvas,
-  drawSegment,
+  drawSegment
 }: AnimationControllerParams) {
-  const tweenGroup = new AutoplayTweenGroup()
+  const tweens: Tween[] = []
+
+  function replaceTweens (...newTweens: Tween[]): void {
+    const config = getConfig()
+    config.tweenGroup.remove(...tweens)
+    tweens.length = 0
+    tweens.push(...newTweens)
+    config.tweenGroup.add(...newTweens)
+  }
 
   function createTween ({ from, to }: AnimationConfig): Tween {
     const config = getConfig()
@@ -43,8 +50,7 @@ export function createAnimationController ({
   function animate (animationConfig: AnimationConfig): Promise<void> {
     return new Promise((resolve) => {
       const tween = createTween(animationConfig)
-      tweenGroup.removeAll()
-      tweenGroup.add(tween)
+      replaceTweens(tween)
 
       tween
         .onComplete(() => resolve())
@@ -83,10 +89,16 @@ export function createAnimationController ({
       .delay(holdAfterOut)
       .chain(animationOut)
 
-    tweenGroup.removeAll()
-    tweenGroup.add(animationIn, animationOut, animationInFollow)
-
+    replaceTweens(animationIn, animationOut, animationInFollow)
     animationIn.start()
+  }
+
+  function updateAnimation() {
+    const config = getConfig()
+    for (const tween of tweens) {
+      tween.duration(config.animationDuration)
+      tween.easing(config.animationEasing)
+    }
   }
 
   return {
@@ -94,6 +106,7 @@ export function createAnimationController ({
     animateIn,
     animateBackOut,
     animateWipeOut,
-    animateLoop
+    animateLoop,
+    updateAnimation
   }
 }

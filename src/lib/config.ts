@@ -2,6 +2,7 @@ import { Easing } from '@tweenjs/tween.js'
 import { fillArray } from './utils/array.ts'
 import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
 import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
+import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
 export interface Config {
   renderWidth: Pixels
@@ -20,7 +21,8 @@ export interface Config {
   animationDuration: Milliseconds
   animationEasing: EasingFunction
   lineCap: CanvasLineCap
-  lineJoin: CanvasLineJoin
+  lineJoin: CanvasLineJoin,
+  tweenGroup: AutoplayTweenGroup
 }
 
 export interface RenderState {
@@ -51,6 +53,7 @@ export interface RawConfig {
   animationEasing: EasingString,
   lineCap: CanvasLineCap
   lineJoin: CanvasLineJoin
+  tweenGroup?: string
 }
 
 export type EasingString =
@@ -98,7 +101,8 @@ export function resolveConfig (raw: RawConfig): Config {
     animationDuration: raw.animationDuration,
     animationEasing: getEasingByString(raw.animationEasing),
     lineCap: raw.lineCap,
-    lineJoin: raw.lineJoin
+    lineJoin: raw.lineJoin,
+    tweenGroup: getTweenGroup(raw.tweenGroup) ?? new AutoplayTweenGroup(),
   }
 }
 
@@ -112,6 +116,10 @@ export function resolveField<T extends keyof Config> (key: T, raw: Partial<RawCo
 
   if (key === 'animationEasing' && typeof raw.animationEasing === 'string') {
     return getEasingByString(raw.animationEasing) as Config[T]
+  }
+
+  if (key === 'tweenGroup' && typeof raw.tweenGroup === 'string') {
+    return (getTweenGroup(raw.tweenGroup) ?? new AutoplayTweenGroup()) as Config[T]
   }
 
   // Passthrough — value is already the correct type
@@ -144,4 +152,5 @@ export const DEFAULT_RAW_CONFIG: RawConfig = {
   animationEasing: 'Cubic.InOut',
   lineCap: 'round',
   lineJoin: 'round',
+  tweenGroup: undefined
 }

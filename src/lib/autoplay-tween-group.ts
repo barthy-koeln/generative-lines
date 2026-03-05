@@ -1,6 +1,26 @@
 import { Group, Tween } from '@tweenjs/tween.js'
 
 /**
+ * Registry of named tween groups.
+ * Groups persist for the lifetime of the application.
+ */
+const tweenGroupRegistry = new Map<string, AutoplayTweenGroup>()
+
+/**
+ */
+export function getTweenGroup (name?: string): AutoplayTweenGroup | undefined {
+  if (name === undefined) {
+    return undefined
+  }
+
+  if(!tweenGroupRegistry.has(name)) {
+    tweenGroupRegistry.set(name, new AutoplayTweenGroup())
+  }
+
+  return tweenGroupRegistry.get(name)
+}
+
+/**
  * A tween group that automatically starts playing when tweens are added and stops when all tweens are removed.
  */
 export class AutoplayTweenGroup extends Group {
