@@ -1760,6 +1760,13 @@ function-bind@^1.1.2:
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.2.tgz#2c02d864d97f3ea6c8830c464cbd11ab6eab7a1c"
   integrity sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==
 
+generative-lines@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/generative-lines/-/generative-lines-0.1.1.tgz#65b8e93136d61d3b417d2a31e14885e80ba5c933"
+  integrity sha512-N1/JdbF8R+mrLGd7QMapBVhSUPimw0dDstgEaItPTWxGZoHQZ2Gje8Qdo/NBHdFlQs1I1bOqYFDr/gFOygvKRw==
+  dependencies:
+    "@tweenjs/tween.js" "^25.0.0"
+
 get-east-asian-width@^1.0.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/get-east-asian-width/-/get-east-asian-width-1.4.0.tgz#9bc4caa131702b4b61729cb7e42735bc550c9ee6"
