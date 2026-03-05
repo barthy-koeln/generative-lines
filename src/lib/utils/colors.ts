@@ -7,7 +7,6 @@ export function createGradient (context: CanvasRenderingContext2D, start: Pixels
   for (let i = 0; i < colors.length; i++) {
     const color = colors[i]
     const index = colors.indexOf(color)
-    console.info(color)
     gradient.addColorStop(index * colorDistance, color)
   }
 

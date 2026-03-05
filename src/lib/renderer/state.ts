@@ -7,13 +7,11 @@ import {
   resolveConfig
 } from '../config.ts'
 import { createLines } from '../generator.ts'
-import type { Line } from '../types.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
 
 export interface StateControllerParams {
   canvas: HTMLCanvasElement
-  context: CanvasRenderingContext2D,
   onConfigChange: (newConfig: Partial<Config>, mergedConfig: Config) => void
 }
 
@@ -23,7 +21,6 @@ export interface StateControllerParams {
  */
 export function createStateController ({
   canvas,
-  context,
   onConfigChange
 }: StateControllerParams) {
   let config: Config
