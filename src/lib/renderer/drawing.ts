@@ -17,6 +17,8 @@ export function createDrawingController ({
   getState,
   context,
 }: DrawingControllerParams) {
+  let currentSegment: [from: number, to: number] = [0, 0]
+
   function applyDrawingStyle (): void {
     const config = getConfig()
     const state = getState()
@@ -50,6 +52,12 @@ export function createDrawingController ({
 
       context.stroke()
     }
+
+    currentSegment = [from, to]
+  }
+
+  function getCurrentSegment (): [number, number] {
+    return currentSegment
   }
 
   function clearCanvas (): void {
@@ -84,6 +92,7 @@ export function createDrawingController ({
     drawSegment,
     clearCanvas,
     drawFull,
-    captureImage
+    captureImage,
+    getCurrentSegment
   }
 }
