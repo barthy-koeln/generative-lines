@@ -42,6 +42,7 @@
     "dist"
   ],
   "dependencies": {
+    "@astrojs/mdx": "^4.3.13",
     "@tweenjs/tween.js": "^25.0.0",
     "generative-lines": "^0.1.1"
   },
