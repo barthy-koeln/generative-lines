@@ -1,0 +1,66 @@
+---
+
+---
+
+<canvas class="ASwitchingCanvas" />
+
+
+<script>
+  import { useRenderer } from '../../lib/renderer.ts'
+
+  const canvasElement = document.querySelector<HTMLCanvasElement>('.ASwitchingCanvas')
+  if (!canvasElement) {
+    throw new Error('Canvas element not found')
+  }
+
+  const context = canvasElement.getContext('2d')
+  if (!context) {
+    throw new Error('2D context not available')
+  }
+
+  const renderer = useRenderer(canvasElement, context)
+  renderer.initialize({
+    renderWidth: canvasElement.offsetWidth,
+    renderHeight: canvasElement.offsetHeight,
+    steps: 12,
+    colors: 3,
+    distance: 12,
+    amplitude: 8,
+    thickness: 1,
+    lines: 12,
+    paddingX: 64,
+    paddingY: 16,
+    perspective: 0.02,
+    background: '#181818',
+    animationDuration: 2000,
+  })
+
+
+  function randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  // noinspection InfiniteRecursionJS
+  async function infiniteLoop() {
+    await renderer.animateIn()
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    await renderer.animateWipeOut()
+    await new Promise(resolve => setTimeout(resolve, 500))
+    renderer.rerollColors()
+    renderer.mergeConfig({
+      steps: randomInt(8, 64),
+      distance: randomInt(2, 24),
+      amplitude: randomInt(8, 32),
+    })
+    return infiniteLoop()
+  }
+
+  infiniteLoop()
+</script>
+
+<style>
+  .ASwitchingCanvas {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+</style>
