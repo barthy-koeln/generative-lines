@@ -68,6 +68,8 @@ interface Renderer {
   drawFull(): void
   clearCanvas(): void
   captureImage(): string
+  drawSegment(from: number, to: number): void
+  getCurrentSegment(): [from: number, to: number]
 
   // Animation
   animate(animationConfig: AnimationConfig): Promise<void>

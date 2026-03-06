@@ -24,7 +24,8 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     drawSegment,
     applyDrawingStyle,
     drawFull,
-    captureImage
+    captureImage,
+    getCurrentSegment
   } = createDrawingController({
     getConfig,
     getState,
@@ -102,7 +103,10 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       updateAnimation()
     }
 
-    drawFull()
+    // Redraw only the current segment to avoid flicker during animations
+    applyDrawingStyle()
+    clearCanvas()
+    drawSegment(...getCurrentSegment())
   }
 
   return {
@@ -123,14 +127,16 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     mergeState,
     rerollLines,
     rerollColors,
-    captureImage,
     drawFull,
     clearCanvas,
+    captureImage,
+    drawSegment,
+    getCurrentSegment,
     animate,
     animateIn,
     animateBackOut,
     animateWipeOut,
-    animateLoop,
+    animateLoop
   }
 }
 
