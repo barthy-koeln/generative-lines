@@ -1,11 +1,4 @@
-import {
-  type Config,
-  createRenderState,
-  DEFAULT_RAW_CONFIG,
-  type RawConfig,
-  type RenderState,
-  resolveConfig
-} from '../config.ts'
+import { type Config, createRenderState, DEFAULT_CONFIG, type RenderState } from '../config.ts'
 import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
@@ -26,13 +19,13 @@ export function createStateController ({
   let config: Config
   let state: RenderState
 
-  function resizeCanvas(){
+  function resizeCanvas () {
     canvas.width = config.renderWidth
     canvas.height = config.renderHeight
   }
 
-  function initialize (rawConfig: Partial<RawConfig>, existingState?: RenderState): void {
-    config = resolveConfig({ ...DEFAULT_RAW_CONFIG, ...rawConfig })
+  function initialize (partialConfig: Partial<Config>, existingState?: RenderState): void {
+    config = { ...DEFAULT_CONFIG, ...partialConfig }
     resizeCanvas()
 
     // Precedence: Incoming one, existing one, or new random one if not provided

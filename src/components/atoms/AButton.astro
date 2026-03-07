@@ -1,12 +1,15 @@
 ---
-export interface Props  {
+export interface Props {
   id?: string
 }
 
 const props = Astro.props
 ---
 
-<button class="AButton" {...props}>
+<button
+  class="AButton"
+  {...props}
+>
   <slot/>
 </button>
 

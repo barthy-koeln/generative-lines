@@ -4,7 +4,7 @@ export interface Props {
   center?: boolean;
 }
 
-const { dark = false, center = true } = Astro.props;
+const { dark = false, center = true } = Astro.props
 ---
 
 <div class:list={['TPage', { '-dark': dark, '-center': center }]}>

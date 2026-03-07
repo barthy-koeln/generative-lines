@@ -93,7 +93,7 @@ export function createAnimationController ({
     animationIn.start()
   }
 
-  function updateAnimation() {
+  function updateAnimation () {
     const config = getConfig()
     for (const tween of tweens) {
       tween.duration(config.animationDuration)

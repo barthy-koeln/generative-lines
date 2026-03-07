@@ -2,21 +2,15 @@
 
 import { ATTRIBUTE_TO_KEY, parseAllAttributes, parseSingleAttribute, } from './config-schema.ts'
 import { type Renderer, useRenderer } from './renderer.ts'
-import { DEFAULT_RAW_CONFIG, type RawConfig } from './config.ts'
-
-export interface LinesCanvasAttributes extends RawConfig {
-  autoplay?: 'true' | 'false' | 'loop'
-}
+import { DEFAULT_CONFIG } from './config.ts'
 
 export class LinesCanvas extends HTMLElement {
   public static observedAttributes = [...ATTRIBUTE_TO_KEY.keys()]
-
-  private isBatchUpdating: boolean = false
-
   public canvas: HTMLCanvasElement
   public context: CanvasRenderingContext2D
   public renderer: Renderer
   public isMounted: boolean = false
+  private isBatchUpdating: boolean = false
 
   constructor () {
     super()
@@ -35,7 +29,7 @@ export class LinesCanvas extends HTMLElement {
 
   connectedCallback () {
     this.renderer.initialize(parseAllAttributes(this, {
-      ...DEFAULT_RAW_CONFIG,
+      ...DEFAULT_CONFIG,
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
     }))
@@ -72,14 +66,14 @@ export class LinesCanvas extends HTMLElement {
     this.renderer.mergeConfig(update)
   }
 
-  public startBatchUpdate() {
+  public startBatchUpdate () {
     this.isBatchUpdating = true
   }
 
-  public endBatchUpdate() {
+  public endBatchUpdate () {
     this.isBatchUpdating = false
     this.renderer.initialize(parseAllAttributes(this, {
-      ...DEFAULT_RAW_CONFIG,
+      ...DEFAULT_CONFIG,
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
     }))

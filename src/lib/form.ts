@@ -2,7 +2,7 @@ export interface FormFieldMinReq {
   name: string,
   placeholder?: string,
   required?: boolean,
-  value?: string|number
+  value?: string | number
 }
 
 export interface FormField extends FormFieldMinReq {

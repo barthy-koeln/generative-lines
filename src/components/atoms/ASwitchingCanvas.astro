@@ -2,7 +2,7 @@
 
 ---
 
-<canvas class="ASwitchingCanvas" />
+<canvas class="ASwitchingCanvas"/>
 
 
 <script>
@@ -35,13 +35,12 @@
     animationDuration: 2000,
   })
 
-
-  function randomInt(min: number, max: number): number {
+  function randomInt (min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
   // noinspection InfiniteRecursionJS
-  async function infiniteLoop() {
+  async function infiniteLoop () {
     await renderer.animateIn()
     await new Promise(resolve => setTimeout(resolve, 1000))
     await renderer.animateWipeOut()

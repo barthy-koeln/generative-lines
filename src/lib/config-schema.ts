@@ -1,4 +1,6 @@
-import { type Config, type RawConfig, resolveField } from './config.ts'
+import type { Config } from './config.ts'
+import { DEFAULT_CONFIG, getEasingByString } from './config.ts'
+import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
 type SchemaFieldType = 'int' | 'float' | 'string'
 
@@ -7,7 +9,7 @@ interface SchemaField {
   type: SchemaFieldType
 }
 
-export type ConfigSchema = Record<keyof RawConfig, SchemaField>
+export type ConfigSchema = Record<keyof Config, SchemaField>
 
 export const CONFIG_SCHEMA: ConfigSchema = {
   renderWidth: { attribute: 'render-width', type: 'int' },
@@ -33,9 +35,9 @@ export const CONFIG_SCHEMA: ConfigSchema = {
 /**
  * Reverse map: HTML attribute name -> config property key
  */
-export const ATTRIBUTE_TO_KEY: Map<string, keyof RawConfig> = new Map(
+export const ATTRIBUTE_TO_KEY: Map<string, keyof Config> = new Map(
   Object.entries(CONFIG_SCHEMA).map(
-    ([key, field]) => [field.attribute, key as keyof RawConfig],
+    ([key, field]) => [field.attribute, key as keyof Config],
   ),
 )
 
@@ -99,28 +101,29 @@ function getAttributeByType (
 }
 
 /**
- * Parses all schema fields from element attributes into the raw config.
+ * Parses all schema fields from element attributes into the config.
  */
 export function parseAllAttributes (
   element: HTMLElement,
-  fallback: RawConfig,
-): RawConfig {
-  const rawConfig: Partial<RawConfig> = {}
-  for (const key of Object.keys(CONFIG_SCHEMA) as (keyof RawConfig)[]) {
+  fallback: Partial<Config>,
+): Partial<Config> {
+  const config: Partial<Config> = {}
+  for (const key of Object.keys(CONFIG_SCHEMA) as (keyof Config)[]) {
     const field = CONFIG_SCHEMA[key]
-    rawConfig[key] = getAttributeByType(
+    const rawValue = getAttributeByType(
       element,
       field.attribute,
       field.type,
-      fallback[key],
+      key in fallback ? fallback[key] : DEFAULT_CONFIG[key],
     )
+    config[key] = convertValue(key, rawValue)
   }
 
-  return rawConfig as RawConfig
+  return config
 }
 
 /**
- * Parses a single attribute by its HTML attribute name into the raw config.
+ * Parses a single attribute by its HTML attribute name into the config.
  * Returns the config key that was updated, or undefined if unknown.
  */
 export function parseSingleAttribute (
@@ -134,16 +137,41 @@ export function parseSingleAttribute (
   }
 
   const field = CONFIG_SCHEMA[key]
-  const raw: Partial<RawConfig> = {
-    [key]: getAttributeByType(
+  return {
+    [key]: convertValue(key, getAttributeByType(
       element,
       field.attribute,
       field.type,
       null,
-    ),
+    )),
+  }
+}
+
+/**
+ * Converts raw attribute values to their final Config types.
+ * Handles special cases like easing functions and tween groups.
+ */
+function convertValue (key: keyof Config, value: any): any {
+  if (value === null || value === undefined) {
+    return value
   }
 
-  return {
-    [key]: resolveField(key, raw),
-  } as Partial<Config>
+  // Already resolved - skip conversion
+  if (key === 'easing' || key === 'animationEasing') {
+    if (typeof value === 'function') {
+      return value
+    }
+
+    return getEasingByString(value as string)
+  }
+
+  if (key === 'tweenGroup') {
+    if (value instanceof AutoplayTweenGroup) {
+      return value
+    }
+
+    return getTweenGroup(value as string) ?? new AutoplayTweenGroup()
+  }
+
+  return value
 }

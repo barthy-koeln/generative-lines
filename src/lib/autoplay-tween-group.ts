@@ -13,7 +13,7 @@ export function getTweenGroup (name?: string): AutoplayTweenGroup | undefined {
     return undefined
   }
 
-  if(!tweenGroupRegistry.has(name)) {
+  if (!tweenGroupRegistry.has(name)) {
     tweenGroupRegistry.set(name, new AutoplayTweenGroup())
   }
 

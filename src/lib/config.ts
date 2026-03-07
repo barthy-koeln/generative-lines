@@ -2,7 +2,7 @@ import { Easing } from '@tweenjs/tween.js'
 import { fillArray } from './utils/array.ts'
 import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
 import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
-import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
+import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
 
 export interface Config {
   renderWidth: Pixels
@@ -31,31 +31,6 @@ export interface RenderState {
   lines: Line[]
 }
 
-/**
- * Fields parsed from HTML attributes before resolution.
- * Easing and background are strings at this stage.
- */
-export interface RawConfig {
-  renderWidth: Pixels
-  renderHeight: Pixels
-  distance: Pixels
-  amplitude: Pixels
-  thickness: Pixels
-  lines: Integer
-  paddingX: Pixels
-  paddingY: Pixels
-  perspective: Normalized
-  steps: Integer
-  colors: Integer
-  easing: EasingString
-  background: CSSColor
-  animationDuration: Milliseconds
-  animationEasing: EasingString,
-  lineCap: CanvasLineCap
-  lineJoin: CanvasLineJoin
-  tweenGroup?: string
-}
-
 export type EasingString =
   `${keyof Omit<typeof Easing, 'Linear' | 'generatePow'>}.${'In' | 'Out' | 'InOut'}`
   | `Linear.None`
@@ -72,7 +47,7 @@ export const EASING_STRINGS: EasingString[] = Object.entries(Easing).flatMap(([e
   return Object.keys(group).map(option => `${easing}.${option}`)
 }) as EasingString[]
 
-function getEasingByString (easing: string): EasingFunction {
+export function getEasingByString (easing: string): EasingFunction {
   const [type, method] = easing.split('.')
   const easingFunction = (Easing as any)[type]?.[method] as EasingFunction | undefined
 
@@ -83,49 +58,6 @@ function getEasingByString (easing: string): EasingFunction {
   return easingFunction
 }
 
-export function resolveConfig (raw: RawConfig): Config {
-  return {
-    renderWidth: raw.renderWidth,
-    renderHeight: raw.renderHeight,
-    distance: raw.distance,
-    amplitude: raw.amplitude,
-    thickness: raw.thickness,
-    lines: raw.lines,
-    paddingX: raw.paddingX,
-    paddingY: raw.paddingY,
-    perspective: raw.perspective,
-    steps: raw.steps,
-    colors: raw.colors,
-    easing: getEasingByString(raw.easing),
-    background: raw.background,
-    animationDuration: raw.animationDuration,
-    animationEasing: getEasingByString(raw.animationEasing),
-    lineCap: raw.lineCap,
-    lineJoin: raw.lineJoin,
-    tweenGroup: getTweenGroup(raw.tweenGroup) ?? new AutoplayTweenGroup(),
-  }
-}
-
-/**
- * Resolves a single raw field into its Config-typed value.
- */
-export function resolveField<T extends keyof Config> (key: T, raw: Partial<RawConfig>): Config[T] {
-  if (key === 'easing' && typeof raw.easing === 'string') {
-    return getEasingByString(raw.easing) as Config[T]
-  }
-
-  if (key === 'animationEasing' && typeof raw.animationEasing === 'string') {
-    return getEasingByString(raw.animationEasing) as Config[T]
-  }
-
-  if (key === 'tweenGroup' && typeof raw.tweenGroup === 'string') {
-    return (getTweenGroup(raw.tweenGroup) ?? new AutoplayTweenGroup()) as Config[T]
-  }
-
-  // Passthrough — value is already the correct type
-  return (raw as unknown as Config)[key]
-}
-
 export function createRenderState (config: Config): RenderState {
   return {
     steps: fillArray(config.steps, getRandomFloat),
@@ -134,23 +66,23 @@ export function createRenderState (config: Config): RenderState {
   }
 }
 
-export const DEFAULT_RAW_CONFIG: RawConfig = {
+export const DEFAULT_CONFIG: Config = {
   renderWidth: 1024,
   renderHeight: 1024,
-  steps: 12,
-  colors: 3,
   distance: 12,
   amplitude: 32,
   thickness: 2,
   lines: 12,
   paddingX: 20,
   paddingY: 20,
-  background: 'transparent',
   perspective: -0.02,
-  easing: 'Cubic.InOut',
+  steps: 12,
+  colors: 3,
+  easing: getEasingByString('Cubic.InOut'),
+  background: 'transparent',
   animationDuration: 0,
-  animationEasing: 'Cubic.InOut',
+  animationEasing: getEasingByString('Cubic.InOut'),
   lineCap: 'round',
   lineJoin: 'round',
-  tweenGroup: undefined
+  tweenGroup: new AutoplayTweenGroup()
 }

@@ -1,5 +1,4 @@
-import type { Config } from '../config.ts'
-import type { RenderState } from '../config.ts'
+import type { Config, RenderState } from '../config.ts'
 import { createGradient } from '../utils/colors.ts'
 
 export interface DrawingControllerParams {

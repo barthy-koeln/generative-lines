@@ -63,7 +63,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
         continue
       }
 
-      if(key == 'steps') {
+      if (key == 'steps') {
         needsRebuild = true
         rerollLines()
         continue

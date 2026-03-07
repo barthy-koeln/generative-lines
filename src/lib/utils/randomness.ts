@@ -1,7 +1,7 @@
 import type { Normalized } from '../types'
 
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
+function getRandomInt (max: number) {
+  return Math.floor(Math.random() * max)
 }
 
 export function getRandomColor (): string {
