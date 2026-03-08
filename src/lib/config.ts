@@ -58,14 +58,6 @@ export function getEasingByString (easing: string): EasingFunction {
   return easingFunction
 }
 
-export function createRenderState (config: Config): RenderState {
-  return {
-    steps: fillArray(config.steps, getRandomFloat),
-    colors: fillArray(config.colors, getRandomColor),
-    lines: fillArray(config.lines, () => [])
-  }
-}
-
 export const DEFAULT_CONFIG: Config = {
   renderWidth: 1024,
   renderHeight: 1024,

@@ -30,3 +30,16 @@ customElements.define('lines-canvas', LinesCanvas)
 - [Playground](https://generative-lines.barthy.koeln/docs) — Detailed documentation for the library and web component.
 - [Demo](https://generative-lines.barthy.koeln/demo) — Scroll-through demos showcasing different configurations and styles.
 - [Documentation](https://generative-lines.barthy.koeln/docs) — Detailed documentation for the library and web component.
+
+## Usage of ML Agent tools
+
+I use [IntelliJ full-line completion model](https://plugins.jetbrains.com/plugin/14823-full-line-code-completion) to write the code for this project.
+
+I also use locally ran llama-cpp with models such as:
+* [QuantFactory/EuroLLM]
+* [mistralai/Ministral-3]
+* [unsloth/Qwen3.5]
+
+They assist with documentation, tedious refactoring, etc.
+
+I know every line of code I publish. 

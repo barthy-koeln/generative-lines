@@ -40,7 +40,7 @@ function getEasedCurvePoints (points: Line, easingFunction: EasingFunction): Lin
  */
 export function createLines (
   config: Config,
-  state: RenderState
+  state: Omit<RenderState, 'lines'>
 ) {
   const innerWidth = config.renderWidth - 2 * config.paddingX
   const innerHeight = config.renderHeight - 2 * config.paddingY

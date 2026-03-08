@@ -1,4 +1,4 @@
-import type { Config } from './config.ts'
+import type { Config, RenderState } from './config.ts'
 import { DEFAULT_CONFIG, getEasingByString } from './config.ts'
 import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
@@ -35,11 +35,13 @@ export const CONFIG_SCHEMA: ConfigSchema = {
 /**
  * Reverse map: HTML attribute name -> config property key
  */
-export const ATTRIBUTE_TO_KEY: Map<string, keyof Config> = new Map(
+export const CONFIG_ATTRIBUTE_TO_KEY: Map<string, keyof Config> = new Map(
   Object.entries(CONFIG_SCHEMA).map(
     ([key, field]) => [field.attribute, key as keyof Config],
   ),
 )
+
+export const STATE_ATTRIBUTES: string[] = ['color-values', 'step-values']
 
 function getIntAttribute (element: HTMLElement, name: string, fallback: number): number {
   if (!element.hasAttribute(name)) {
@@ -83,6 +85,24 @@ function getStringAttribute (element: HTMLElement, name: string, fallback: strin
   return attributeValue === null ? fallback : attributeValue
 }
 
+function getArrayAttribute<InnerType> (
+  element: HTMLElement,
+  name: string,
+  fallback: InnerType[],
+  parser: (value: string) => InnerType
+): InnerType[] {
+  if (!element.hasAttribute(name)) {
+    return fallback
+  }
+
+  const attributeValue = element.getAttribute(name)
+  if (attributeValue === null) {
+    return fallback
+  }
+
+  return attributeValue.split(',').map(parser)
+}
+
 function getAttributeByType (
   element: HTMLElement,
   attribute: string,
@@ -103,7 +123,7 @@ function getAttributeByType (
 /**
  * Parses all schema fields from element attributes into the config.
  */
-export function parseAllAttributes (
+export function parseAllConfigAttributes (
   element: HTMLElement,
   fallback: Partial<Config>,
 ): Partial<Config> {
@@ -126,11 +146,11 @@ export function parseAllAttributes (
  * Parses a single attribute by its HTML attribute name into the config.
  * Returns the config key that was updated, or undefined if unknown.
  */
-export function parseSingleAttribute (
+export function parseSingleConfigAttribute (
   element: HTMLElement,
   attributeName: string,
 ): Partial<Config> | null {
-  const key = ATTRIBUTE_TO_KEY.get(attributeName)
+  const key = CONFIG_ATTRIBUTE_TO_KEY.get(attributeName)
   if (!key) {
     // Unknown attribute
     return null
@@ -144,6 +164,42 @@ export function parseSingleAttribute (
       field.type,
       null,
     )),
+  }
+}
+
+export function parseSingleStateAttribute (
+  element: HTMLElement,
+  attributeName: string
+): Partial<RenderState> {
+  if (attributeName === 'color-values') {
+    const value = element.getAttribute(attributeName)
+    if (!value) {
+      return {}
+    }
+
+    return {
+      colors: value.split(',')
+    }
+  }
+
+  if (attributeName === 'step-values') {
+    const value = element.getAttribute(attributeName)
+    if (!value) {
+      return {}
+    }
+
+    return {
+      steps: value.split(',').map(Number.parseFloat)
+    }
+  }
+
+  return {}
+}
+
+export function parseAllStateAttributes(element: HTMLElement): Partial<RenderState> {
+  return {
+    ... parseSingleStateAttribute(element, 'color-values'),
+    ...parseSingleStateAttribute(element, 'step-values'),
   }
 }
 

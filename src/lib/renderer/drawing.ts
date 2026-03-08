@@ -1,5 +1,5 @@
 import type { Config, RenderState } from '../config.ts'
-import { createGradient } from '../utils/colors.ts'
+import { useCachedGradient } from '../utils/colors.ts'
 
 export interface DrawingControllerParams {
   getConfig: () => Config
@@ -17,6 +17,8 @@ export function createDrawingController ({
   context,
 }: DrawingControllerParams) {
   let currentSegment: [from: number, to: number] = [0, 0]
+
+  const { createGradient } = useCachedGradient()
 
   function applyDrawingStyle (): void {
     const config = getConfig()

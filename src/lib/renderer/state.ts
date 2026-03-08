@@ -1,7 +1,8 @@
-import { type Config, createRenderState, DEFAULT_CONFIG, type RenderState } from '../config.ts'
+import { type Config, type RenderState } from '../config.ts'
 import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
+import { DEFAULT_CONFIG } from '../config.ts'
 
 export interface StateControllerParams {
   canvas: HTMLCanvasElement
@@ -19,18 +20,31 @@ export function createStateController ({
   let config: Config
   let state: RenderState
 
-  function resizeCanvas () {
+  function resizeCanvas (): void {
     canvas.width = config.renderWidth
     canvas.height = config.renderHeight
   }
 
-  function initialize (partialConfig: Partial<Config>, existingState?: RenderState): void {
+  function initialize (partialConfig: Partial<Config>, incomingState?: Partial<RenderState>): void {
     config = { ...DEFAULT_CONFIG, ...partialConfig }
     resizeCanvas()
 
     // Precedence: Incoming one, existing one, or new random one if not provided
-    state = existingState ?? state ?? createRenderState(config)
-    rebuildLines()
+    const newState: RenderState = {
+      ...(state ?? {}),
+      ...incomingState
+    }
+
+    if (!newState.steps) {
+      newState.steps = fillArray(config.steps, getRandomFloat)
+    }
+
+    if(!newState.colors) {
+      newState.colors = fillArray(config.colors, getRandomColor)
+    }
+
+    newState.lines = createLines(config, newState)
+    state = newState as RenderState
   }
 
   function mergeConfig (newConfig: Partial<Config>): void {
@@ -51,6 +65,10 @@ export function createStateController ({
       ...state,
       ...newState,
     }
+
+    config.colors = state.colors.length
+    config.steps = state.steps.length
+
     rebuildLines()
   }
 
@@ -63,10 +81,10 @@ export function createStateController ({
   }
 
   return {
-    getConfig () {
+    getConfig (): Config {
       return config
     },
-    getState () {
+    getState (): RenderState {
       return state
     },
     initialize,

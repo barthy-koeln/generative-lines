@@ -14,9 +14,7 @@ import Layout from '../layouts/Layout.astro'
   <section class="intro">
     <lines-canvas
       animation-duration="2000"
-      steps="12"
       lines="32"
-      colors="5"
       thickness="2"
       easing="Sinusoidal.InOut"
       animation-easing="Cubic.Out"
@@ -27,6 +25,8 @@ import Layout from '../layouts/Layout.astro'
       padding-y="0"
       autoplay="false"
       tween-group="demo"
+      color-values="#33ff33,#bada55,white,#bada55,#33ff33"
+      step-values="-1.0,0.5,0.0,0.0,-0.5,1.0"
     />
   </section>
 

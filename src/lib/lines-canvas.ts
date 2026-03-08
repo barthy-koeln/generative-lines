@@ -1,11 +1,18 @@
 /// <reference lib="DOM" />
 
-import { ATTRIBUTE_TO_KEY, parseAllAttributes, parseSingleAttribute, } from './config-schema.ts'
+import {
+  CONFIG_ATTRIBUTE_TO_KEY,
+  parseAllConfigAttributes,
+  parseAllStateAttributes,
+  parseSingleConfigAttribute,
+  parseSingleStateAttribute,
+  STATE_ATTRIBUTES,
+} from './config-schema.ts'
 import { type Renderer, useRenderer } from './renderer.ts'
 import { DEFAULT_CONFIG } from './config.ts'
 
 export class LinesCanvas extends HTMLElement {
-  public static observedAttributes = [...ATTRIBUTE_TO_KEY.keys()]
+  public static observedAttributes = [...CONFIG_ATTRIBUTE_TO_KEY.keys(), ...STATE_ATTRIBUTES]
   public canvas: HTMLCanvasElement
   public context: CanvasRenderingContext2D
   public renderer: Renderer
@@ -28,11 +35,14 @@ export class LinesCanvas extends HTMLElement {
   }
 
   connectedCallback () {
-    this.renderer.initialize(parseAllAttributes(this, {
-      ...DEFAULT_CONFIG,
-      renderWidth: this.offsetWidth,
-      renderHeight: this.offsetHeight
-    }))
+    this.renderer.initialize(
+      parseAllConfigAttributes(this, {
+        ...DEFAULT_CONFIG,
+        renderWidth: this.offsetWidth,
+        renderHeight: this.offsetHeight
+      }),
+      parseAllStateAttributes(this)
+    )
 
     this.isMounted = true
 
@@ -57,13 +67,20 @@ export class LinesCanvas extends HTMLElement {
       return
     }
 
-    const update = parseSingleAttribute(this, name)
-    if (!update) {
-      // Unknown attribute
+    if (CONFIG_ATTRIBUTE_TO_KEY.has(name)) {
+      const update = parseSingleConfigAttribute(this, name)
+      if (!update) {
+        // Unknown attribute
+        return
+      }
+
+      this.renderer.mergeConfig(update)
       return
     }
 
-    this.renderer.mergeConfig(update)
+    if (STATE_ATTRIBUTES.includes(name)) {
+      this.renderer.mergeState(parseSingleStateAttribute(this, name))
+    }
   }
 
   public startBatchUpdate () {
@@ -72,7 +89,7 @@ export class LinesCanvas extends HTMLElement {
 
   public endBatchUpdate () {
     this.isBatchUpdating = false
-    this.renderer.initialize(parseAllAttributes(this, {
+    this.renderer.initialize(parseAllConfigAttributes(this, {
       ...DEFAULT_CONFIG,
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
