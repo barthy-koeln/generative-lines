@@ -72,7 +72,7 @@ export const DEFAULT_CONFIG: Config = {
   colors: 3,
   easing: getEasingByString('Cubic.InOut'),
   background: 'transparent',
-  animationDuration: 0,
+  animationDuration: 1_000,
   animationEasing: getEasingByString('Cubic.InOut'),
   lineCap: 'round',
   lineJoin: 'round',

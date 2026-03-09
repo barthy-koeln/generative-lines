@@ -1,0 +1,68 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: 'Using Hardcoded Values'
+---
+
+import AHardcodedCanvas from '../../components/atoms/AHardcodedCanvas.astro'
+
+Control line positions and colors deterministically via HTML attributes.
+
+## Setup
+
+Add `color-values` and `step-values` attributes to the `lines-canvas` element:
+
+```html
+<lines-canvas
+  color-values="#aabbcc,#bada55,green"
+  step-values="0.0,0.1,-0.1,0.3,-0.3,0.5,-0.5,0.7,-0.7,0.9,-0.9,0.0"
+  perspective="0.03"
+  autoplay="loop"
+/>
+```
+
+<AHardcodedCanvas/>
+
+## Attributes
+
+| Attribute      | Description                                         | Format                                                                                                                                     |
+|----------------|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `color-values` | Override generated colors with fixed values         | Comma-separated [CSSColor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value):<br/>`"lightblue,blue,darkblue"` |
+| `step-values`  | Override generated step positions with fixed values | Comma-separated floats `[-1.0, 1.0]`:<br/>`"-0.5,0.1,0.3,0.5"`                                                                             |
+
+## Dynamic Updates
+
+Change values after mounting by modifying attributes:
+
+```javascript
+const canvas = document.querySelector('lines-canvas')
+
+// Update colors
+canvas.setAttribute('color-values', 'lightblue,blue,darkblue')
+
+// Update step positions
+canvas.setAttribute('step-values', '0.2,0.4,0.6,0.8')
+canvas.setAttribute('step-values', [0.2, 0.4, 0.6, 0.8].join(','))
+
+// Or access the renderer:
+canvas.renderer.mergeState({
+  colors: ['lightblue', 'blue', 'darkblue']
+})
+```
+
+The renderer detects attribute changes and rebuilds the lines with the new values.
+
+## Programmatic Control
+
+Access `mergeState()` directly via the renderer:
+
+```typescript
+import { useRenderer } from 'generative-lines'
+
+const canvas = document.querySelector('lines-canvas')
+const renderer = useRenderer(canvas as HTMLCanvasElement, canvas.getContext('2d')!)
+
+renderer.mergeState({
+  colors: ['hsl(0.1, 0.5, 0.5)', 'rgb(122, 134, 0 / 30%)', 'light-dark(black, white)'],
+  steps: [0.2, 0.4, 0.6, 0.8]
+})
+```

@@ -55,7 +55,7 @@ interface Renderer {
   state: RenderState
 
   // Initialization
-  initialize(rawConfig: RawConfig, existingState?: RenderState): void
+  initialize(rawConfig: RawConfig, incomingState?: Partial<RenderState>): void
 
   // Configuration Updates
   mergeConfig(newConfig: Partial<Config>): void
@@ -102,13 +102,12 @@ Simple animations tween from a start rendering range to an end rendering range:
 
 When updating config via `mergeConfig()`, the renderer determines what needs to be rebuilt:
 
-| Config Change                               | Action                  |
-|---------------------------------------------|-------------------------|
-| `renderWidth`, `renderHeight`               | Resize canvas           |
-| `background`, `line-cap`, `line-join`       | Restyle lines           |
-| `thickness`                                 | Restyle + rebuild lines |
-| `colors`                                    | Reroll colors + restyle |
-| `steps`                                     | Reroll lines + rebuild  |
-| `distance`, `amplitude`, `paddingX/Y`, etc. | Rebuild lines only      |
-
-Note: `animationDuration` and `animationEasing` changes do not restart ongoing animations.
+| Config Change                               | Action                    |
+|---------------------------------------------|---------------------------|
+| `renderWidth`, `renderHeight`               | Resize canvas             |
+| `background`, `line-cap`, `line-join`       | Restyle lines             |
+| `thickness`                                 | Restyle + rebuild lines   |
+| `colors`                                    | Reroll colors + restyle   |
+| `steps`                                     | Reroll lines + rebuild    |
+| `distance`, `amplitude`, `paddingX/Y`, etc. | Rebuild lines only        |
+| `animationDuration`, `animationEasing`      | Changes running animation |
