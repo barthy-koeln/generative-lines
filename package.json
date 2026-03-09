@@ -42,10 +42,10 @@
     "dist"
   ],
   "dependencies": {
+    "@astrojs/starlight": "^0.37.7",
     "@tweenjs/tween.js": "^25.0.0"
   },
   "devDependencies": {
-    "@astrojs/mdx": "^4.3.13",
     "@fontsource-variable/red-hat-mono": "^5.2.8",
     "@fontsource/ubuntu": "^5.2.8",
     "@types/chroma-js": "^3.1.2",

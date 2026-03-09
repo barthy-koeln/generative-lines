@@ -1,3 +1,33 @@
+/* Dark mode colors. */
+:root {
+  --sl-color-accent-low: var(--color-white);
+  --sl-color-accent: var(--color-light);
+  --sl-color-accent-high: var(--color-accent);
+  --sl-color-white: var(--color-white);
+  --sl-color-gray-1: #dddddd;
+  --sl-color-gray-2: #cccccc;
+  --sl-color-gray-3: #bbbbbb;
+  --sl-color-gray-4: #555555;
+  --sl-color-gray-5: #444444;
+  --sl-color-gray-6: #333333;
+  --sl-color-black: var(--color-black);
+}
+/* Light mode colors. */
+:root[data-theme='light'] {
+  --sl-color-accent-low: #c7d6ff;
+  --sl-color-accent: #364bff;
+  --sl-color-accent-high: #182775;
+  --sl-color-white: #17181c;
+  --sl-color-gray-1: #24272f;
+  --sl-color-gray-2: #353841;
+  --sl-color-gray-3: #545861;
+  --sl-color-gray-4: #888b96;
+  --sl-color-gray-5: #c0c2c7;
+  --sl-color-gray-6: #eceef2;
+  --sl-color-gray-7: #f5f6f8;
+  --sl-color-black: #ffffff;
+}
+
 .astro-code {
   padding: var(--spacer);
 }

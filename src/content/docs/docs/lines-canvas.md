@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/DocsLayout.astro
 title: "Using the LinesCanvas Element"
 description: "Guide on using the lines-canvas Web Component for generative line art animations, including registration, attributes, animation modes, and programmatic API."
 ---

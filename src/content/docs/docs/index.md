@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocsLayout.astro
-title: "Documentation"
+title: "Start"
 description: "Documentation for the generative-lines library."
 ---
-
-# Documentation
 
 - [Renderer](/docs/renderer) — Core rendering system and drawing primitives.
 - [Lines Canvas](/docs/lines-canvas) — Interactive canvas component for drawing generative lines.
