@@ -21,6 +21,13 @@ export function createAnimationController ({
 }: AnimationControllerParams) {
   const tweens: Tween[] = []
 
+  function clearTweens() {
+    console.info('clearTweens')
+    const config = getConfig()
+    config.tweenGroup.remove(...tweens)
+    tweens.length = 0
+  }
+
   function replaceTweens (...newTweens: Tween[]): void {
     const config = getConfig()
     config.tweenGroup.remove(...tweens)
@@ -53,6 +60,7 @@ export function createAnimationController ({
       replaceTweens(tween)
 
       tween
+        .onComplete(() => clearTweens())
         .onComplete(() => resolve())
         .start()
     })
@@ -107,6 +115,7 @@ export function createAnimationController ({
     animateBackOut,
     animateWipeOut,
     animateLoop,
+    replaceTweens,
     updateAnimation
   }
 }

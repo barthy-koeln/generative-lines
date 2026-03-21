@@ -38,6 +38,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateBackOut,
     animateWipeOut,
     animateLoop,
+    replaceTweens,
     updateAnimation,
   } = createAnimationController({
     getConfig,
@@ -136,7 +137,8 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateIn,
     animateBackOut,
     animateWipeOut,
-    animateLoop
+    animateLoop,
+    replaceTweens
   }
 }
 

@@ -166,47 +166,64 @@ import Layout from '../layouts/Layout.astro'
 
 <script>
   import { LinesCanvas } from '../lib/lines-canvas.ts'
+  import { Tween } from '@tweenjs/tween.js'
 
   customElements.define('lines-canvas', LinesCanvas)
 
+  const LOWER_BOUND = 0.01
+  const UPPER_BOUND = 0.8
   const observer = new IntersectionObserver(handleIntersection, {
-    threshold: [0.01, 0.8],
+    rootMargin: "0px",
+    root: document,
+    threshold: [LOWER_BOUND, UPPER_BOUND],
   })
 
-  function handleIntersection (entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
-    for (const entry of entries) {
-      const linesCanvas: Element = entry.target
-      if (!(linesCanvas instanceof LinesCanvas)) {
-        throw new Error('Entry target is not a LinesCanvas element')
-      }
+  function canvasEnteredViewPort (entry: IntersectionObserverEntry): void {
+    const linesCanvas: Element = entry.target
+    if (!(linesCanvas instanceof LinesCanvas)) {
+      throw new Error('Entry target is not a LinesCanvas element')
+    }
 
-      if (entry.intersectionRatio <= 0.01) {
-        if (linesCanvas.dataset.status === 'cleared') {
-          continue
-        }
+    if (linesCanvas.dataset.status === 'animated') {
+      return
+    }
 
-        linesCanvas.renderer.clearCanvas()
-        linesCanvas.dataset.status = 'cleared'
-        continue
-      }
-
-      if (linesCanvas.dataset.status === 'animated') {
-        continue
-      }
-
-      if (linesCanvas.parentElement?.classList.contains('finale')) {
-        linesCanvas.renderer.animateLoop()
-        linesCanvas.dataset.status = 'animated'
-        continue
-      }
-
-      if (linesCanvas.parentElement?.firstElementChild === linesCanvas) {
-        linesCanvas.renderer.animate({ from: [0, 0], to: [0, 1] })
-      } else {
-        linesCanvas.renderer.animate({ from: [1, 1], to: [0, 1] })
-      }
-
+    if (linesCanvas.parentElement?.classList.contains('finale')) {
+      linesCanvas.renderer.animateLoop()
       linesCanvas.dataset.status = 'animated'
+      return
+    }
+
+    if (linesCanvas.parentElement?.firstElementChild === linesCanvas) {
+      linesCanvas.renderer.animate({ from: [0, 0], to: [0, 1] })
+    } else {
+      linesCanvas.renderer.animate({ from: [1, 1], to: [0, 1] })
+    }
+
+    linesCanvas.dataset.status = 'animated'
+  }
+
+  function canvasLeftViewPort (entry: IntersectionObserverEntry): void {
+    const linesCanvas: Element = entry.target
+    if (!(linesCanvas instanceof LinesCanvas)) {
+      throw new Error('Entry target is not a LinesCanvas element')
+    }
+
+    linesCanvas.renderer.clearCanvas()
+    linesCanvas.dataset.status = 'cleared'
+  }
+
+  function handleIntersection (entries: IntersectionObserverEntry[]): void {
+    for (const entry of entries) {
+      console.info(entry.target.parentElement?.classList.contains('finale'), entry.intersectionRatio)
+      if (entry.intersectionRatio <= LOWER_BOUND) {
+        canvasLeftViewPort(entry)
+        return
+      }
+
+      if (entry.intersectionRatio >= UPPER_BOUND) {
+        canvasEnteredViewPort(entry)
+      }
     }
   }
 
@@ -217,17 +234,30 @@ import Layout from '../layouts/Layout.astro'
   }
 
   for (const canvas of canvasses) {
+    console.info('observe:', canvas.parentElement?.classList.contains('finale'))
     observer.observe(canvas)
   }
 
-  function animate (time: DOMHighResTimeStamp) {
-    const progress = ((time % 8000) / 8000) * Math.PI * 2
-    firstCanvas!.renderer.mergeConfig({ distance: 8 * Math.sin(progress) })
-    requestAnimationFrame(animate)
+  function animate ({ progress }: { progress: number }) {
+    firstCanvas!.renderer.mergeConfig({ distance: 8 * progress })
   }
 
   firstCanvas.renderer.animateIn().then(() => {
-    requestAnimationFrame(animate)
+    const tweenIn = new Tween({ progress: 1.0 })
+      .to({ progress: -1.0 })
+      .duration(8000)
+      .onUpdate(animate)
+
+    const tweenOut = new Tween({ progress: -1.0 })
+      .to({ progress: 1.0 })
+      .duration(8000)
+      .onUpdate(animate)
+
+    tweenIn.chain(tweenOut)
+    tweenOut.chain(tweenIn)
+    tweenIn.start()
+
+    firstCanvas.renderer.replaceTweens(tweenIn, tweenOut)
   })
 </script>
 

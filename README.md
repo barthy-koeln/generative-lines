@@ -11,6 +11,8 @@ I wrote this to explore:
 
 ## Quickstart
 
+[NPM Registry](https://www.npmjs.com/package/generative-lines)
+
 ```shell
 npm install --save generative-lines
 ```
