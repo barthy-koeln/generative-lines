@@ -171,7 +171,7 @@ import Layout from '../layouts/Layout.astro'
   customElements.define('lines-canvas', LinesCanvas)
 
   const LOWER_BOUND = 0.01
-  const UPPER_BOUND = 0.8
+  const UPPER_BOUND = 0.6
   const observer = new IntersectionObserver(handleIntersection, {
     rootMargin: "0px",
     root: document,
@@ -215,10 +215,9 @@ import Layout from '../layouts/Layout.astro'
 
   function handleIntersection (entries: IntersectionObserverEntry[]): void {
     for (const entry of entries) {
-      console.info(entry.target.parentElement?.classList.contains('finale'), entry.intersectionRatio)
       if (entry.intersectionRatio <= LOWER_BOUND) {
         canvasLeftViewPort(entry)
-        return
+        continue
       }
 
       if (entry.intersectionRatio >= UPPER_BOUND) {
@@ -234,7 +233,6 @@ import Layout from '../layouts/Layout.astro'
   }
 
   for (const canvas of canvasses) {
-    console.info('observe:', canvas.parentElement?.classList.contains('finale'))
     observer.observe(canvas)
   }
 
