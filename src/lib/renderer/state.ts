@@ -1,8 +1,7 @@
-import { type Config, type RenderState } from '../config.ts'
+import { type Config, DEFAULT_CONFIG, type RenderState } from '../config.ts'
 import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
-import { DEFAULT_CONFIG } from '../config.ts'
 
 export interface StateControllerParams {
   canvas: HTMLCanvasElement
@@ -39,7 +38,7 @@ export function createStateController ({
       newState.steps = fillArray(config.steps, getRandomFloat)
     }
 
-    if(!newState.colors) {
+    if (!newState.colors) {
       newState.colors = fillArray(config.colors, getRandomColor)
     }
 

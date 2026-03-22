@@ -1,6 +1,4 @@
 import { Easing } from '@tweenjs/tween.js'
-import { fillArray } from './utils/array.ts'
-import { getRandomColor, getRandomFloat } from './utils/randomness.ts'
 import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
 import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
 

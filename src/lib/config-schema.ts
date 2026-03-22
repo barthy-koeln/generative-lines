@@ -196,9 +196,9 @@ export function parseSingleStateAttribute (
   return {}
 }
 
-export function parseAllStateAttributes(element: HTMLElement): Partial<RenderState> {
+export function parseAllStateAttributes (element: HTMLElement): Partial<RenderState> {
   return {
-    ... parseSingleStateAttribute(element, 'color-values'),
+    ...parseSingleStateAttribute(element, 'color-values'),
     ...parseSingleStateAttribute(element, 'step-values'),
   }
 }

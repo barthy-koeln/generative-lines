@@ -1,4 +1,5 @@
-import { Group, Tween } from '@tweenjs/tween.js'
+import type { Tween } from '@tweenjs/tween.js'
+import { Group } from '@tweenjs/tween.js'
 
 /**
  * Registry of named tween groups.

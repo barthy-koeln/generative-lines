@@ -21,7 +21,7 @@ export function createAnimationController ({
 }: AnimationControllerParams) {
   const tweens: Tween[] = []
 
-  function clearTweens() {
+  function clearTweens () {
     console.info('clearTweens')
     const config = getConfig()
     config.tweenGroup.remove(...tweens)
