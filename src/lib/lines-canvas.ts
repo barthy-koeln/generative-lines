@@ -2,6 +2,7 @@
 
 import {
   CONFIG_ATTRIBUTE_TO_KEY,
+  CONFIG_SCHEMA,
   parseAllConfigAttributes,
   parseAllStateAttributes,
   parseSingleConfigAttribute,
@@ -18,6 +19,7 @@ export class LinesCanvas extends HTMLElement {
   public renderer: Renderer
   public isMounted: boolean = false
   private isBatchUpdating: boolean = false
+  private isSyncingAttributes: boolean = false
 
   constructor () {
     super()
@@ -44,6 +46,16 @@ export class LinesCanvas extends HTMLElement {
       parseAllStateAttributes(this)
     )
 
+    this.renderer.addConfigChangeListener((update) => {
+      if (this.isSyncingAttributes) {
+        return
+      }
+
+      this.isSyncingAttributes = true
+      this.syncAttributesToConfig(update)
+      this.isSyncingAttributes = false
+    })
+
     this.isMounted = true
 
     const autoplay: string | null = this.getAttribute('autoplay')
@@ -63,14 +75,20 @@ export class LinesCanvas extends HTMLElement {
 
   attributeChangedCallback (name: string, _oldValue: unknown, _newValue: unknown) {
     if (!this.isMounted) {
-      // Not mounted yet, skip
       return
     }
 
     if (CONFIG_ATTRIBUTE_TO_KEY.has(name)) {
+      if (this.isBatchUpdating) {
+        return
+      }
+
+      if (this.isSyncingAttributes) {
+        return
+      }
+
       const update = parseSingleConfigAttribute(this, name)
       if (!update) {
-        // Unknown attribute
         return
       }
 
@@ -94,5 +112,13 @@ export class LinesCanvas extends HTMLElement {
       renderWidth: this.offsetWidth,
       renderHeight: this.offsetHeight
     }))
+  }
+
+  private syncAttributesToConfig (update: Partial<Record<string, any>>): void {
+    for (const [key, value] of Object.entries(update)) {
+      const schemaEntry = CONFIG_SCHEMA[key as keyof typeof CONFIG_SCHEMA]
+      const attr = schemaEntry.attribute
+      this.setAttribute(attr, String(value))
+    }
   }
 }

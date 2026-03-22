@@ -1,7 +1,7 @@
 import { createAnimationController } from './renderer/animation.ts'
 import { createDrawingController } from './renderer/drawing.ts'
 import { createStateController } from './renderer/state.ts'
-import type { Config } from './config.ts'
+import type { RenderState } from './config.ts'
 
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
   const {
@@ -13,10 +13,11 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     rerollLines,
     rerollColors,
     rebuildLines,
-    resizeCanvas
+    resizeCanvas,
+    addConfigChangeListener,
+    removeConfigChangeListener
   } = createStateController({
-    canvas,
-    onConfigChange
+    canvas
   })
 
   const {
@@ -47,13 +48,13 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     drawSegment
   })
 
-  function onConfigChange (newConfig: Partial<Config>): void {
+  addConfigChangeListener((update) => {
     let needsRebuild = false
     let needsRestyle = false
     let needsResize = false
     let needsAnimationUpdate = false
 
-    for (const [key, value] of Object.entries(newConfig)) {
+    for (const [key, value] of Object.entries(update)) {
       if (value === undefined) {
         continue
       }
@@ -108,7 +109,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     applyDrawingStyle()
     clearCanvas()
     drawSegment(...getCurrentSegment())
-  }
+  })
 
   return {
     get config () {
@@ -120,7 +121,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     get state () {
       return getState()
     },
-    set state (newState) {
+    set state (newState: Partial<RenderState>) {
       mergeState(newState)
     },
     initialize,
@@ -138,7 +139,9 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateBackOut,
     animateWipeOut,
     animateLoop,
-    replaceTweens
+    replaceTweens,
+    addConfigChangeListener,
+    removeConfigChangeListener
   }
 }
 

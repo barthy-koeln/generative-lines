@@ -3,9 +3,10 @@ import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
 
+export type ConfigChangeCallback = (update: Partial<Config>, config: Config) => void
+
 export interface StateControllerParams {
   canvas: HTMLCanvasElement
-  onConfigChange: (newConfig: Partial<Config>, mergedConfig: Config) => void
 }
 
 /**
@@ -13,22 +14,27 @@ export interface StateControllerParams {
  * Handles initialization, updates, and line regeneration.
  */
 export function createStateController ({
-  canvas,
-  onConfigChange
+  canvas
 }: StateControllerParams) {
   let config: Config
   let state: RenderState
+  const configChangeListeners: Set<ConfigChangeCallback> = new Set()
 
   function resizeCanvas (): void {
     canvas.width = config.renderWidth
     canvas.height = config.renderHeight
   }
 
+  function notifyConfigChange (update: Partial<Config>, config: Config): void {
+    for (const listener of configChangeListeners) {
+      listener(update, config)
+    }
+  }
+
   function initialize (partialConfig: Partial<Config>, incomingState?: Partial<RenderState>): void {
     config = { ...DEFAULT_CONFIG, ...partialConfig }
     resizeCanvas()
 
-    // Precedence: Incoming one, existing one, or new random one if not provided
     const newState: RenderState = {
       ...(state ?? {}),
       ...incomingState
@@ -44,15 +50,17 @@ export function createStateController ({
 
     newState.lines = createLines(config, newState)
     state = newState as RenderState
+
+    notifyConfigChange({}, config)
   }
 
-  function mergeConfig (newConfig: Partial<Config>): void {
+  function mergeConfig (update: Partial<Config>): void {
     config = {
       ...config,
-      ...newConfig,
+      ...update,
     }
 
-    onConfigChange(newConfig, config)
+    notifyConfigChange(update, config)
   }
 
   function rebuildLines (): void {
@@ -79,13 +87,28 @@ export function createStateController ({
     state.colors = fillArray(config.colors, getRandomColor)
   }
 
+  function addConfigChangeListener (callback: ConfigChangeCallback): () => void {
+    configChangeListeners.add(callback)
+    return () => configChangeListeners.delete(callback)
+  }
+
+  function removeConfigChangeListener (callback: ConfigChangeCallback): void {
+    configChangeListeners.delete(callback)
+  }
+
+  function getConfig (): Config {
+    return config
+  }
+
+  function getState (): RenderState {
+    return state
+  }
+
   return {
-    getConfig (): Config {
-      return config
-    },
-    getState (): RenderState {
-      return state
-    },
+    addConfigChangeListener,
+    removeConfigChangeListener,
+    getConfig,
+    getState,
     initialize,
     mergeConfig,
     mergeState,
