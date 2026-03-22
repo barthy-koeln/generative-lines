@@ -58,11 +58,25 @@ customElements.define('lines-canvas', LinesCanvas)
 | `perspective`        | `float`                   | -0.02                 | Perspective scaling factor                                                                                            |
 | `easing`             | tween.js easing           | `Cubic.InOut`         | Easing function ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))                          |
 | `background`         | `string`                  | `transparent`         | Background color (CSSColor, [MDN ref](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value)) |
-| `animation-duration` | `int`                     | 0                     | Animation duration in ms                                                                                              |
+| `animation-duration` | `int`                     | `1000`                | Animation duration in ms                                                                                              |
 | `animation-easing`   | tween.js easing           | `Cubic.InOut `        | Animation easing function  ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))               |
 | `line-cap`           | `butt`, `round`, `square` | `round`               | Line end cap style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap))     |
 | `line-join`          | `round`, `bevel`, `miter` | `round`               | Line join style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin))       |
 | `autoplay`           | `true`, `loop`, `false`   | `false`               | Animation mode                                                                                                        |
+| `tween-group`        | `string`                  | `AutoplayTweenGroup`  | Tween group for animation control ([ref](#tweengroup))                                                               |
+
+## TweenGroup
+
+The `tween-group` attribute allows you to control which tween group manages the animation:
+
+```html
+<lines-canvas
+  tween-group="custom-group"
+  autoplay="loop"
+/>
+```
+
+Multiple elements can share the same tween group to synchronize animations.
 
 ## Animation Modes
 
@@ -123,7 +137,7 @@ const element = document.querySelector('lines-canvas')
 
 #### `startBatchUpdate()` / `endBatchUpdate()`
 
-Batch multiple attribute changes into a single reconfiguration:
+Batch multiple attribute changes into a single reconfiguration. Multiple attribute changes will be combined into one configuration update:
 
 ```javascript
 element.startBatchUpdate()
@@ -131,6 +145,43 @@ element.setAttribute('steps', '20')
 element.setAttribute('colors', '5')
 element.setAttribute('distance', '10')
 element.endBatchUpdate()
+```
+
+#### `getConfig()` / `getState()`
+
+Access the current configuration and state via getters:
+
+```javascript
+const config = element.renderer.config
+const state = element.renderer.state
+```
+
+#### `replaceTweens()`
+
+Replace running animation tweens with a new configuration:
+
+```javascript
+// Replace tweens with a custom configuration
+renderer.replaceTweens(/* new tweens */)
+```
+
+> **Note:** Changing `animationDuration` or `animationEasing` config values automatically updates running tweens.
+
+#### `rerollLines()` / `rerollColors()`
+
+Reroll random state for lines or colors:
+
+```javascript
+renderer.rerollLines()  // Generate new line positions
+renderer.rerollColors() // Generate new colors
+```
+
+#### `captureImage()`
+
+Capture the current canvas state as a data URL:
+
+```javascript
+const imageData = renderer.captureImage() // returns PNG data URL
 ```
 
 #### Accessing the Renderer
@@ -147,13 +198,14 @@ await renderer.animateWipeOut()
 renderer.animateLoop()
 
 // Update configuration
-renderer.updateConfig({ steps: 20, colors: 5 })
+renderer.mergeConfig({ steps: 20, colors: 5 })
 
 // Reroll random state
-renderer.reroll()
+renderer.rerollLines()
+renderer.rerollColors()
 
 // Capture image
-const imageData = renderer.capture() // returns data URL
+const imageData = renderer.captureImage() // returns data URL
 ```
 
 ## Dynamic Attribute Changes

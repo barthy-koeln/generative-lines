@@ -13,7 +13,7 @@ npm install --save generative-lines
 ```
 
 ```javascript
-import { LinesCanvas } from 'generative-lines'
+import { LinesCanvas } from 'generative-lines/lines-canvas'
 
 customElements.define('lines-canvas', LinesCanvas)
 ```

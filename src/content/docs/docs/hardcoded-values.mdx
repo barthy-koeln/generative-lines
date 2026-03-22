@@ -52,16 +52,20 @@ The renderer detects attribute changes and rebuilds the lines with the new value
 
 ## Programmatic Control
 
-Access `mergeState()` directly via the renderer:
+Access the renderer via the custom element and update configuration or state:
 
-```typescript
-import { useRenderer } from 'generative-lines'
-
+```javascript
 const canvas = document.querySelector('lines-canvas')
-const renderer = useRenderer(canvas as HTMLCanvasElement, canvas.getContext('2d')!)
 
-renderer.mergeState({
-  colors: ['hsl(0.1, 0.5, 0.5)', 'rgb(122, 134, 0 / 30%)', 'light-dark(black, white)'],
+// Update configuration
+canvas.renderer.mergeConfig({
+  colors: 5,
+  steps: 20
+})
+
+// Update state (colors and steps only)
+canvas.renderer.mergeState({
+  colors: ['#ff0000', '#00ff00', '#0000ff'],
   steps: [0.2, 0.4, 0.6, 0.8]
 })
 ```
