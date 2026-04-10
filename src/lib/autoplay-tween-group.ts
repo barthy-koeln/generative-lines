@@ -9,26 +9,25 @@ const tweenGroupRegistry = new Map<string, AutoplayTweenGroup>()
 
 /**
  */
-export function getTweenGroup (name?: string): AutoplayTweenGroup | undefined {
-  if (name === undefined) {
-    return undefined
-  }
-
+export function getTweenGroup (name: string = 'default'): AutoplayTweenGroup {
   if (!tweenGroupRegistry.has(name)) {
-    tweenGroupRegistry.set(name, new AutoplayTweenGroup())
+    tweenGroupRegistry.set(name, new AutoplayTweenGroup(name))
   }
 
-  return tweenGroupRegistry.get(name)
+  return tweenGroupRegistry.get(name)!
 }
 
 /**
  * A tween group that automatically starts playing when tweens are added and stops when all tweens are removed.
  */
 export class AutoplayTweenGroup extends Group {
+  public readonly name: string
   private animationFrame: ReturnType<typeof requestAnimationFrame> | null = null
 
-  constructor () {
+  constructor (name: string) {
+    console.info('creating AutoplayTweenGroup')
     super()
+    this.name = name
     this.animate = this.animate.bind(this)
   }
 
@@ -45,6 +44,7 @@ export class AutoplayTweenGroup extends Group {
       return
     }
 
+    this.animationFrame = null
     this.queueFrame()
   }
 
@@ -53,10 +53,9 @@ export class AutoplayTweenGroup extends Group {
    * @param tweens
    */
   add (...tweens: Tween[]) {
-    const wasEmpty = this.getAll().length === 0
     super.add(...tweens)
 
-    if (wasEmpty && tweens.length > 0) {
+    if (!this.allStopped()) {
       this.queueFrame()
     }
   }
@@ -67,7 +66,7 @@ export class AutoplayTweenGroup extends Group {
    */
   remove (...tweens: Tween[]) {
     super.remove(...tweens)
-    if (this.getAll().length === 0) {
+    if (this.allStopped()) {
       this.stopPlaying()
     }
   }
@@ -89,6 +88,7 @@ export class AutoplayTweenGroup extends Group {
       return
     }
 
+    console.info(this.name, 'cancelAnimationFrame')
     cancelAnimationFrame(this.animationFrame)
     this.animationFrame = null
   }
@@ -98,6 +98,10 @@ export class AutoplayTweenGroup extends Group {
    * Effectively starts the animation loop if it is not already active.
    */
   queueFrame () {
+    if (this.animationFrame) {
+      return
+    }
+
     this.animationFrame = requestAnimationFrame(this.animate)
   }
 }

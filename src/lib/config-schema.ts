@@ -226,7 +226,7 @@ function convertValue (key: keyof Config, value: any): any {
       return value
     }
 
-    return getTweenGroup(value as string) ?? new AutoplayTweenGroup()
+    return getTweenGroup(value as string)
   }
 
   return value

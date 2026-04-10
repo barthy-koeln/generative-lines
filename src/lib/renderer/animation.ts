@@ -22,7 +22,6 @@ export function createAnimationController ({
   const tweens: Tween[] = []
 
   function clearTweens () {
-    console.info('clearTweens')
     const config = getConfig()
     config.tweenGroup.remove(...tweens)
     tweens.length = 0
@@ -57,12 +56,13 @@ export function createAnimationController ({
   function animate (animationConfig: AnimationConfig): Promise<void> {
     return new Promise((resolve) => {
       const tween = createTween(animationConfig)
-      replaceTweens(tween)
 
       tween
         .onComplete(() => clearTweens())
         .onComplete(() => resolve())
         .start()
+
+      replaceTweens(tween)
     })
   }
 
@@ -97,8 +97,9 @@ export function createAnimationController ({
       .delay(holdAfterOut)
       .chain(animationOut)
 
-    replaceTweens(animationIn, animationOut, animationInFollow)
     animationIn.start()
+
+    replaceTweens(animationIn, animationOut, animationInFollow)
   }
 
   function updateAnimation () {

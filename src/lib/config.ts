@@ -1,6 +1,6 @@
 import { Easing } from '@tweenjs/tween.js'
 import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
-import { AutoplayTweenGroup } from './autoplay-tween-group.ts'
+import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
 export interface Config {
   renderWidth: Pixels
@@ -74,5 +74,5 @@ export const DEFAULT_CONFIG: Config = {
   animationEasing: getEasingByString('Cubic.InOut'),
   lineCap: 'round',
   lineJoin: 'round',
-  tweenGroup: new AutoplayTweenGroup()
+  tweenGroup: getTweenGroup()
 }
