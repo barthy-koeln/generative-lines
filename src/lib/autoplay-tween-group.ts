@@ -25,7 +25,6 @@ export class AutoplayTweenGroup extends Group {
   private animationFrame: ReturnType<typeof requestAnimationFrame> | null = null
 
   constructor (name: string) {
-    console.info('creating AutoplayTweenGroup')
     super()
     this.name = name
     this.animate = this.animate.bind(this)
@@ -88,7 +87,6 @@ export class AutoplayTweenGroup extends Group {
       return
     }
 
-    console.info(this.name, 'cancelAnimationFrame')
     cancelAnimationFrame(this.animationFrame)
     this.animationFrame = null
   }
