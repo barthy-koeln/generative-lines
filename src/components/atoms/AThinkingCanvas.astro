@@ -1,0 +1,196 @@
+---
+---
+
+<div class="AThinkingCanvas">
+  <canvas
+    height="314"
+    width="628"
+  />
+
+  <p>How can I help today?</p>
+</div>
+
+<script>
+  import { useRenderer } from '../../lib/renderer.ts'
+  import { getScale } from 'color2k'
+  import { createStepsInterpolator } from '../../lib/utils/interpolators.ts'
+  import { Easing } from '@tweenjs/tween.js'
+
+  const containerElement = document.querySelector<HTMLDivElement>('.AThinkingCanvas')!
+  const canvasElement = containerElement?.querySelector<HTMLCanvasElement>('canvas')!
+  const messageElement = containerElement?.querySelector<HTMLCanvasElement>('p')!
+  const context = canvasElement.getContext('2d')
+  if (!context) {
+    throw new Error('2D context not available')
+  }
+
+  const renderer = useRenderer(canvasElement, context)
+
+  const colorScales = [
+    getScale('#1fd125', '#a30fba'),
+    getScale('#a5de5f', '#f05e54'),
+    getScale('#cdd14d', '#3446ba'),
+  ]
+
+  const getSteps = createStepsInterpolator(16)
+
+  let animationFrame: ReturnType<typeof requestAnimationFrame> | null = null
+  let lastFrame: DOMHighResTimeStamp = 0.0
+  let duration: number = 8_000
+  let delta: number = 0.0
+  let timeProgress: number = 0.0
+  let progress: number = 0.0
+  let thickness: number = 2
+  let distance: number = 4
+  let isThinking = {
+    _value: false,
+    set value (newValue: boolean) {
+      this._value = newValue
+
+      containerElement?.setAttribute('data-is-thinking', String(this._value))
+      messageElement.innerText = '*Thinking*'
+    },
+    get value () {
+      return this._value
+    }
+  }
+
+  function getColors (offset: number) {
+    const colors = []
+    for (let i = 0; i < colorScales.length; i++) {
+      colors[i] = colorScales[i](offset)
+    }
+
+    return colors
+  }
+
+  function moveToward (now: number, target: number, delta: number, duration: number) {
+    if (now === target) return now
+
+    return now + (target - now) * (delta / duration)
+  }
+
+  function animate (timestamp: DOMHighResTimeStamp) {
+    delta = lastFrame ? timestamp - lastFrame : 0.0
+    if (delta > 500) {
+      timeProgress = 0
+      lastFrame = timestamp
+      queueFrame()
+      return
+    }
+
+    timeProgress += delta * (isThinking.value ? 8 : 1)
+    if (timeProgress > duration) {
+      timeProgress -= duration
+    }
+
+    thickness = moveToward(thickness, isThinking.value ? 4 : 1, delta, 250)
+    progress = Math.cos((timeProgress / duration) * Math.PI * 2)
+    distance = moveToward(distance, 4 + ((isThinking.value ? 16 : 4) * (progress + 1)), delta, 250)
+    renderer.mergeConfig({
+      distance,
+      thickness
+    })
+    renderer.mergeState({
+      colors: getColors(progress),
+      steps: getSteps(progress),
+    })
+    lastFrame = timestamp
+    queueFrame()
+  }
+
+  function queueFrame () {
+    animationFrame = requestAnimationFrame(animate)
+  }
+
+  async function renderInitialState () {
+    await renderer.animate({ from: renderer.getCurrentSegment(), to: [0.4, 0.6] })
+  }
+
+  function startThinkingAnimation () {
+    if (isThinking.value) {
+      return
+    }
+
+    isThinking.value = true
+    renderer.animate({ from: renderer.getCurrentSegment(), to: [0.0, 1.0] })
+  }
+
+  async function stopThinkingAnimation (event: CustomEvent) {
+    if (!isThinking.value) {
+      return
+    }
+
+    isThinking.value = false
+    if (event.detail && 'message' in event.detail) {
+      messageElement.innerText = event.detail.message
+    }
+
+    await renderInitialState()
+  }
+
+  renderer.initialize({
+    renderWidth: 628,
+    renderHeight: 314,
+    distance: 4,
+    amplitude: 24,
+    thickness,
+    lines: 8,
+    paddingX: 16,
+    paddingY: 16,
+    perspective: 0.01,
+    background: '#181818',
+    animationDuration: 800,
+    easing: Easing.Quadratic.InOut
+  }, { colors: getColors(0.0), steps: getSteps(0.0) })
+
+  renderer.drawSegment(0.5, 0.5)
+  renderInitialState()
+  queueFrame()
+
+  window.addEventListener('astro:thinking:start', startThinkingAnimation)
+  window.addEventListener('astro:thinking:stop', stopThinkingAnimation)
+
+  canvasElement.addEventListener('astro:thinking:start', startThinkingAnimation)
+  canvasElement.addEventListener('astro:thinking:stop', stopThinkingAnimation)
+</script>
+
+<style>
+  .AThinkingCanvas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-lg);
+    place-content: center;
+    align-content: center;
+    place-items: center;
+    height: 314px;
+    aspect-ratio: 2 / 1;
+    overflow: visible;
+    position: relative;
+  }
+
+  canvas {
+    width: 100%;
+    max-width: 100vw;
+    background: var(--color-black);
+  }
+
+  p {
+    opacity: 1;
+    transform: translate(-50%, -16px);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    transition: var(--anim-duration) var(--anim-easing);
+    transition-property: opacity, transform;
+    text-align: center;
+    min-height: 2lh;
+    max-width: 80%;
+  }
+
+  [data-is-thinking="true"] p {
+    opacity: .2;
+    transform: translate(-50%, 0);
+  }
+</style>

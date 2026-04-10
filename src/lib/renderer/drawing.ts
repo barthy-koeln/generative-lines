@@ -23,8 +23,6 @@ export function createDrawingController ({
   function applyDrawingStyle (): void {
     const config = getConfig()
     const state = getState()
-
-    context.imageSmoothingEnabled = false
     context.canvas.style.background = config.background
     context.fillStyle = 'transparent'
     context.strokeStyle = state.colors.length > 1
@@ -68,7 +66,6 @@ export function createDrawingController ({
 
   function drawFull (): void {
     clearCanvas()
-    applyDrawingStyle()
     drawSegment(0, 1)
   }
 

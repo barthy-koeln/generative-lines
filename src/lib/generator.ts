@@ -28,6 +28,23 @@ function getEasedCurvePoints (points: Line, easingFunction: EasingFunction): Lin
   return renderPoints
 }
 
+function clamp (x: number, y: number, z: number) {
+  return Math.max(x, Math.min(y, z))
+}
+
+function getScale (perspective: number, lineIndex: number, lineCount: number): number {
+  const min = 1 / lineCount
+  if (perspective == 0) {
+    return 1
+  }
+
+  if (perspective > 0) {
+    return clamp(min, 1.0, 1 - lineIndex * perspective)
+  }
+
+  return clamp(min, 1.0, 1 - (lineCount - lineIndex) * perspective * -1)
+}
+
 /**
  * Generate lines based on the provided configuration and render state.
  * First generates base points for each line, then applies perspective scaling and easing to create the final renderable lines.
@@ -66,7 +83,7 @@ export function createLines (
   const lines: Line[] = []
 
   for (let lineIndex = 0; lineIndex < config.lines; lineIndex++) {
-    const scale = 1 - lineIndex * config.perspective
+    const scale = getScale(config.perspective, lineIndex, config.lines)
     const scaledPixelsPerStep = scale * pixelsPerStep
 
     /**
@@ -77,8 +94,8 @@ export function createLines (
     const offsetY = centerOffset + config.paddingY + lineIndex * config.distance
 
     const offsetPoints: Line = baseLine.map(([x, y]) => [
-      Math.floor(offsetX + scale * x),
-      Math.floor(offsetY + y),
+      offsetX + scale * x,
+      offsetY + y,
     ])
 
     lines.push(

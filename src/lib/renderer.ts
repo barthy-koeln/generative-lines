@@ -43,7 +43,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     updateAnimation,
   } = createAnimationController({
     getConfig,
-    applyDrawingStyle,
     clearCanvas,
     drawSegment
   })
@@ -53,7 +52,6 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     let needsRestyle = false
     let needsResize = false
     let needsAnimationUpdate = false
-
     for (const [key, value] of Object.entries(update)) {
       if (value === undefined) {
         continue
@@ -79,7 +77,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
         needsRebuild = true
       }
 
-      if (['background', 'thickness', 'line-cap', 'line-join'].includes(key)) {
+      if (['background', 'thickness', 'lineCap', 'lineJoin'].includes(key)) {
         needsRestyle = true
       }
 
@@ -87,6 +85,12 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
         // No need to trigger a full redraw for animation config changes
         needsAnimationUpdate = true
       }
+    }
+
+    if (needsResize) {
+      resizeCanvas()
+      // resize resets context
+      needsRestyle = true
     }
 
     if (needsRestyle) {
@@ -97,16 +101,10 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       rebuildLines()
     }
 
-    if (needsResize) {
-      resizeCanvas()
-    }
-
     if (needsAnimationUpdate) {
       updateAnimation()
     }
 
-    // Redraw only the current segment to avoid flicker during animations
-    applyDrawingStyle()
     clearCanvas()
     drawSegment(...getCurrentSegment())
   })

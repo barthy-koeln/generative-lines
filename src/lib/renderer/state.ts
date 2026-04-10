@@ -51,7 +51,7 @@ export function createStateController ({
     newState.lines = createLines(config, newState)
     state = newState as RenderState
 
-    notifyConfigChange({}, config)
+    notifyConfigChange(config, config)
   }
 
   function mergeConfig (update: Partial<Config>): void {

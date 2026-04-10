@@ -48,9 +48,9 @@
     "@astrojs/starlight": "0.38.2",
     "@fontsource-variable/red-hat-mono": "^5.2.8",
     "@fontsource/ubuntu": "^5.2.8",
-    "@types/chroma-js": "^3.1.2",
     "@types/tween.js": "^18.6.1",
     "astro": "6.0.8",
+    "color2k": "^2.0.3",
     "sass-embedded": "^1.98.0",
     "typescript": "^5.9.3",
     "unbuild": "^3.6.1"

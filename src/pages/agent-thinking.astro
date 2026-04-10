@@ -1,0 +1,130 @@
+---
+import Layout from '../layouts/Layout.astro'
+import AThinkingCanvas from '../components/atoms/AThinkingCanvas.astro'
+import AChatInput from '../components/atoms/AChatInput.astro'
+---
+
+<Layout dark>
+  <div class="AgentThinking">
+    <AThinkingCanvas/>
+
+    <div class="AgentThinking__input-container">
+      <AChatInput id="chat-form"/>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const MOCK_RESPONSES = [
+    'That\'s an interesting perspective. Let me think about that for a moment...',
+    'I\'ve processed your request. Here\'s what I found based on the available information.',
+    'Great question! The answer involves several factors working together.',
+    'I understand what you\'re asking. Based on my analysis, here\'s my response.',
+    'Thanks for sharing that. Here\'s my take on the matter.',
+  ]
+
+  let isProcessing = false
+
+  function getRandomResponse (): string {
+    return MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)]
+  }
+
+  const form = document.querySelector<HTMLFormElement>('#chat-form')
+  const canvas = document.querySelector<HTMLElement>('.AThinkingCanvas canvas')
+
+  function handleSubmit (event: Event) {
+
+    if (!form || !canvas) {
+      throw new Error('Required elements not found')
+    }
+
+    event.preventDefault()
+
+    if (isProcessing) {
+      return
+    }
+
+    const formData = new FormData(form)
+    const message = String(formData.get('message'))
+
+    if (!message.trim()) {
+      return
+    }
+
+    isProcessing = true
+    form.setAttribute('data-processing', 'true')
+
+    const inputField = form.querySelector<HTMLTextAreaElement>('textarea')
+    if (inputField) {
+      inputField.disabled = true
+    }
+
+    canvas.dispatchEvent(new CustomEvent('astro:thinking:start'))
+
+    setTimeout(() => {
+      canvas.dispatchEvent(new CustomEvent('astro:thinking:stop', { detail: { message: getRandomResponse() } }))
+
+      if (inputField) {
+        inputField.disabled = false
+        inputField.value = ''
+        inputField.focus()
+      }
+
+      form.removeAttribute('data-processing')
+      isProcessing = false
+    }, 3000)
+  }
+
+  if (!form) {
+    throw new Error('Required elements not found')
+  }
+
+  form.addEventListener('submit', handleSubmit)
+</script>
+
+<style lang="scss">
+  @use "../variables" as *;
+
+  .AgentThinking {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacer-lg);
+    width: 100%;
+    max-width: 800px;
+    padding: var(--spacer-lg);
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: var(--fontsize-1);
+    color: var(--color-white);
+    margin: 0;
+    text-align: center;
+  }
+
+  .AgentThinking__subtitle {
+    font-size: var(--fontsize-4);
+    color: var(--color-white);
+    opacity: 0.7;
+    margin: 0;
+    text-align: center;
+  }
+
+  .AgentThinking__input-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

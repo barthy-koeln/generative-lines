@@ -1,14 +1,20 @@
 ---
 export interface Props {
   id?: string
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  class: string
 }
 
-const props = Astro.props
+const { type, disabled, id, class: className } = Astro.props
 ---
 
 <button
   class="AButton"
-  {...props}
+  class:list={className}
+  type={type ?? 'button'}
+  disabled={disabled}
+  id={id}
 >
   <slot/>
 </button>

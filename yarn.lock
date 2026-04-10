@@ -1959,13 +1959,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chroma-js@npm:^3.1.2":
-  version: 3.1.2
-  resolution: "@types/chroma-js@npm:3.1.2"
-  checksum: 10c0/d2a7d9612c5abe3733a113d339eb8158cb36aeeeb571a3c371e81e8f3a682cd70f1649cea521716fbb5d79eb96f585a539b304be44e3fa818bd56b2a05f29f73
-  languageName: node
-  linkType: hard
-
 "@types/debug@npm:^4.0.0":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
@@ -2491,6 +2484,13 @@ __metadata:
   version: 2.1.0
   resolution: "collapse-white-space@npm:2.1.0"
   checksum: 10c0/b2e2800f4ab261e62eb27a1fbe853378296e3a726d6695117ed033e82d61fb6abeae4ffc1465d5454499e237005de9cfc52c9562dc7ca4ac759b9a222ef14453
+  languageName: node
+  linkType: hard
+
+"color2k@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "color2k@npm:2.0.3"
+  checksum: 10c0/e7c13d212c9d1abb1690e378bbc0a6fb1751e4b02e9a73ba3b2ade9d54da673834597d342791d577d1ce400ec486c7f92c5098f9fa85cd113bcfde57420a2bb9
   languageName: node
   linkType: hard
 
@@ -3408,9 +3408,9 @@ __metadata:
     "@fontsource-variable/red-hat-mono": "npm:^5.2.8"
     "@fontsource/ubuntu": "npm:^5.2.8"
     "@tweenjs/tween.js": "npm:^25.0.0"
-    "@types/chroma-js": "npm:^3.1.2"
     "@types/tween.js": "npm:^18.6.1"
     astro: "npm:6.0.8"
+    color2k: "npm:^2.0.3"
     sass-embedded: "npm:^1.98.0"
     typescript: "npm:^5.9.3"
     unbuild: "npm:^3.6.1"
