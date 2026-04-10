@@ -10,7 +10,7 @@ import {
   STATE_ATTRIBUTES,
 } from './config-schema.ts'
 import { type Renderer, useRenderer } from './renderer.ts'
-import { DEFAULT_CONFIG } from './config.ts'
+import { type Config, DEFAULT_CONFIG } from './config.ts'
 
 export class LinesCanvas extends HTMLElement {
   public static observedAttributes = [...CONFIG_ATTRIBUTE_TO_KEY.keys(), ...STATE_ATTRIBUTES]
@@ -20,6 +20,8 @@ export class LinesCanvas extends HTMLElement {
   public isMounted: boolean = false
   private isBatchUpdating: boolean = false
   private isSyncingAttributes: boolean = false
+  private syncDebounce: ReturnType<typeof setTimeout> | null = null
+  private pendingUpdate: Partial<Record<string, any>> = {}
 
   constructor () {
     super()
@@ -51,9 +53,7 @@ export class LinesCanvas extends HTMLElement {
         return
       }
 
-      this.isSyncingAttributes = true
-      this.syncAttributesToConfig(update)
-      this.isSyncingAttributes = false
+      this.requestSync(update)
     })
 
     this.isMounted = true
@@ -114,11 +114,26 @@ export class LinesCanvas extends HTMLElement {
     }))
   }
 
-  private syncAttributesToConfig (update: Partial<Record<string, any>>): void {
-    for (const [key, value] of Object.entries(update)) {
+  private requestSync (update: Partial<Config>): void {
+    if (this.syncDebounce) {
+      return
+    }
+    this.pendingUpdate = { ...this.pendingUpdate, ...update }
+    this.syncDebounce = setTimeout(() => {
+      this.isSyncingAttributes = true
+      this.syncAttributesToConfig()
+      this.isSyncingAttributes = false
+    }, 500)
+  }
+
+  private syncAttributesToConfig (): void {
+    for (const [key, value] of Object.entries(this.pendingUpdate)) {
       const schemaEntry = CONFIG_SCHEMA[key as keyof typeof CONFIG_SCHEMA]
       const attr = schemaEntry.attribute
       this.setAttribute(attr, String(value))
     }
+
+    this.pendingUpdate = {}
+    this.syncDebounce = null
   }
 }
