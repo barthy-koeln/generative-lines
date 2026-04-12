@@ -80,7 +80,7 @@ export function createAnimationController ({
     holdAfterOut: Milliseconds = 300,
     inConfig: AnimationConfig = { from: [0, 0], to: [0, 1] },
     outConfig: AnimationConfig = { from: [0, 1], to: [1, 1] }
-  ): void {
+  ): Tween[] {
     const animationIn = createTween(inConfig)
     const animationOut = createTween(outConfig)
     const animationInFollow = createTween(inConfig)
@@ -97,6 +97,12 @@ export function createAnimationController ({
     animationIn.start()
 
     replaceTweens(animationIn, animationOut, animationInFollow)
+
+    return [
+      animationIn,
+      animationOut,
+      animationInFollow
+    ]
   }
 
   function updateAnimation () {
@@ -113,6 +119,7 @@ export function createAnimationController ({
     animateBackOut,
     animateWipeOut,
     animateLoop,
+    createTween,
     replaceTweens,
     updateAnimation
   }

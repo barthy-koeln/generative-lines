@@ -12,8 +12,6 @@ interface SchemaField {
 export type ConfigSchema = Record<keyof Config, SchemaField>
 
 export const CONFIG_SCHEMA: ConfigSchema = {
-  renderWidth: { attribute: 'render-width', type: 'int' },
-  renderHeight: { attribute: 'render-height', type: 'int' },
   steps: { attribute: 'steps', type: 'int' },
   colors: { attribute: 'colors', type: 'int' },
   distance: { attribute: 'distance', type: 'int' },

@@ -59,8 +59,8 @@ export function createLines (
   config: Config,
   state: Omit<RenderState, 'lines'>
 ) {
-  const innerWidth = config.renderWidth - 2 * config.paddingX
-  const innerHeight = config.renderHeight - 2 * config.paddingY
+  const innerWidth = state.size.x - 2 * config.paddingX
+  const innerHeight = state.size.y - 2 * config.paddingY
   const pixelsPerStep = Math.floor(innerWidth / (state.steps.length - 1))
 
   const totalHeight = config.distance * (config.lines - 1) + config.amplitude

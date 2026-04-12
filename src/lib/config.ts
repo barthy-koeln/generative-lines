@@ -3,8 +3,6 @@ import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized,
 import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
 export interface Config {
-  renderWidth: Pixels
-  renderHeight: Pixels
   distance: Pixels
   amplitude: Pixels
   thickness: Pixels
@@ -26,7 +24,9 @@ export interface Config {
 export interface RenderState {
   steps: Normalized[]
   colors: CSSColor[]
-  lines: Line[]
+  lines: Line[],
+  size: { x: number, y: number },
+  isInitialized: boolean,
 }
 
 export type EasingString =
@@ -57,8 +57,6 @@ export function getEasingByString (easing: string): EasingFunction {
 }
 
 export const DEFAULT_CONFIG: Config = {
-  renderWidth: 1024,
-  renderHeight: 1024,
   distance: 12,
   amplitude: 32,
   thickness: 2,

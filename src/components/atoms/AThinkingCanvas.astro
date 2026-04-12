@@ -2,10 +2,7 @@
 ---
 
 <div class="AThinkingCanvas">
-  <canvas
-    height="314"
-    width="628"
-  />
+  <canvas/>
 
   <p>How can I help today?</p>
 </div>
@@ -130,8 +127,6 @@
   }
 
   renderer.initialize({
-    renderWidth: 628,
-    renderHeight: 314,
     distance: 4,
     amplitude: 24,
     thickness,
@@ -163,8 +158,7 @@
     place-content: center;
     align-content: center;
     place-items: center;
-    height: 314px;
-    aspect-ratio: 2 / 1;
+    width: 100%;
     overflow: visible;
     position: relative;
   }
@@ -172,12 +166,14 @@
   canvas {
     width: 100%;
     max-width: 100vw;
+    max-height: 60vh;
+    aspect-ratio: 1;
     background: var(--color-black);
   }
 
   p {
     opacity: 1;
-    transform: translate(-50%, -16px);
+    transform: translate(-50%, 0);
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -191,6 +187,6 @@
 
   [data-is-thinking="true"] p {
     opacity: .2;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 32px);
   }
 </style>

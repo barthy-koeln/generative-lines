@@ -23,10 +23,9 @@ export function createDrawingController ({
   function applyDrawingStyle (): void {
     const config = getConfig()
     const state = getState()
-    context.canvas.style.background = config.background
-    context.fillStyle = 'transparent'
+    context.fillStyle = config.background
     context.strokeStyle = state.colors.length > 1
-      ? createGradient(context, config.paddingX, config.renderWidth - (2 * config.paddingX), state.colors)
+      ? createGradient(context, config.paddingX, state.size.x - (2 * config.paddingX), state.colors)
       : state.colors[0]
     context.lineWidth = config.thickness
     context.lineCap = config.lineCap
@@ -60,8 +59,9 @@ export function createDrawingController ({
   }
 
   function clearCanvas (): void {
-    const config = getConfig()
-    context.clearRect(0, 0, config.renderWidth, config.renderHeight)
+    const state = getState()
+    context.clearRect(0, 0, state.size.x, state.size.y)
+    context.fillRect(0, 0, state.size.x, state.size.y)
   }
 
   function drawFull (): void {
@@ -70,13 +70,10 @@ export function createDrawingController ({
   }
 
   function captureImage (): string {
-    const config = getConfig()
-    const currentState = context.getImageData(0, 0, config.renderWidth, config.renderHeight)
-    clearCanvas()
+    const state = getState()
+    const currentState = context.getImageData(0, 0, state.size.x, state.size.y)
 
-    context.fillStyle = config.background
-    context.fillRect(0, 0, config.renderWidth, config.renderHeight)
-    applyDrawingStyle()
+    clearCanvas()
     drawSegment(0, 1)
 
     const imageData = context.canvas.toDataURL('image/png')

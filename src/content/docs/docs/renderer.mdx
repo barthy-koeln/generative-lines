@@ -4,6 +4,7 @@ description: "Reference documentation for the Renderer module, including archite
 ---
 
 
+
 import ASwitchingCanvas from '../../../components/atoms/ASwitchingCanvas.astro'
 
 # Renderer
@@ -25,8 +26,6 @@ const context = canvas.getContext('2d')
 const renderer = useRenderer(canvas, context)
 
 renderer.initialize({
-  renderWidth: 800,
-  renderHeight: 600,
   steps: 10,
   colors: 3,
 })
@@ -110,7 +109,6 @@ When updating config via `mergeConfig()`, the renderer determines what needs to 
 
 | Config Change                               | Action                    |
 |---------------------------------------------|---------------------------|
-| `renderWidth`, `renderHeight`               | Resize canvas             |
 | `background`, `line-cap`, `line-join`       | Restyle lines             |
 | `thickness`                                 | Restyle + rebuild lines   |
 | `colors`                                    | Reroll colors + restyle   |

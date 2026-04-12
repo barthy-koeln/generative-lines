@@ -43,33 +43,32 @@ customElements.define('lines-canvas', LinesCanvas)
 
 ### Attribute Reference
 
-| Attribute            | Type                      | Default               | Description                                                                                                           |
-|----------------------|---------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `render-width`       | `int`                     | `canvas.offsetWidth`  | Canvas render width in pixels                                                                                         |
-| `render-height`      | `int`                     | `canvas.offsetHeight` | Canvas render height in pixels                                                                                        |
-| `steps`              | `int`                     | 12                    | Number of steps in the line                                                                                           |
-| `colors`             | `int`                     | 3                     | Number of gradient colors                                                                                             |
-| `distance`           | `int`                     | 12                    | Vertical distance between lines                                                                                       |
-| `amplitude`          | `int`                     | 32                    | Maximum Y variation                                                                                                   |
-| `thickness`          | `int`                     | 2                     | Line stroke width                                                                                                     |
-| `lines`              | `int`                     | 12                    | Number of parallel lines                                                                                              |
-| `padding-x`          | `int`                     | 20                    | Horizontal padding                                                                                                    |
-| `padding-y`          | `int`                     | 20                    | Vertical padding                                                                                                      |
-| `perspective`        | `float`                   | -0.02                 | Perspective scaling factor                                                                                            |
-| `easing`             | tween.js easing           | `Cubic.InOut`         | Easing function ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))                          |
-| `background`         | `string`                  | `transparent`         | Background color (CSSColor, [MDN ref](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value)) |
-| `animation-duration` | `int`                     | `1000`                | Animation duration in ms                                                                                              |
-| `animation-easing`   | tween.js easing           | `Cubic.InOut `        | Animation easing function  ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))               |
-| `line-cap`           | `butt`, `round`, `square` | `round`               | Line end cap style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap))     |
-| `line-join`          | `round`, `bevel`, `miter` | `round`               | Line join style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin))       |
-| `autoplay`           | `true`, `loop`, `false`   | `false`               | Animation mode                                                                                                        |
-| `tween-group`        | `string`                  | `AutoplayTweenGroup`  | Tween group for animation control ([ref](#tweengroup))                                                               |
+| Attribute            | Type                      | Default              | Description                                                                                                           |
+|----------------------|---------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `steps`              | `int`                     | 12                   | Number of steps in the line                                                                                           |
+| `colors`             | `int`                     | 3                    | Number of gradient colors                                                                                             |
+| `distance`           | `int`                     | 12                   | Vertical distance between lines                                                                                       |
+| `amplitude`          | `int`                     | 32                   | Maximum Y variation                                                                                                   |
+| `thickness`          | `int`                     | 2                    | Line stroke width                                                                                                     |
+| `lines`              | `int`                     | 12                   | Number of parallel lines                                                                                              |
+| `padding-x`          | `int`                     | 20                   | Horizontal padding                                                                                                    |
+| `padding-y`          | `int`                     | 20                   | Vertical padding                                                                                                      |
+| `perspective`        | `float`                   | -0.02                | Perspective scaling factor                                                                                            |
+| `easing`             | tween.js easing           | `Cubic.InOut`        | Easing function ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))                          |
+| `background`         | `string`                  | `transparent`        | Background color (CSSColor, [MDN ref](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value)) |
+| `animation-duration` | `int`                     | `1000`               | Animation duration in ms                                                                                              |
+| `animation-easing`   | tween.js easing           | `Cubic.InOut `       | Animation easing function  ([tween.js ref](https://tweenjs.github.io/tween.js/examples/03_graphs.html))               |
+| `line-cap`           | `butt`, `round`, `square` | `round`              | Line end cap style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap))     |
+| `line-join`          | `round`, `bevel`, `miter` | `round`              | Line join style ([MDN ref](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin))       |
+| `autoplay`           | `true`, `loop`, `false`   | `false`              | Animation mode                                                                                                        |
+| `tween-group`        | `string`                  | `AutoplayTweenGroup` | Tween group for animation control ([ref](#tweengroup))                                                                |
 
 ## TweenGroup
 
 The `tween-group` attribute allows you to control which tween group manages the animation:
 
 ```html
+
 <lines-canvas
   tween-group="custom-group"
   autoplay="loop"
@@ -137,7 +136,8 @@ const element = document.querySelector('lines-canvas')
 
 #### `startBatchUpdate()` / `endBatchUpdate()`
 
-Batch multiple attribute changes into a single reconfiguration. Multiple attribute changes will be combined into one configuration update:
+Batch multiple attribute changes into a single reconfiguration. Multiple attribute changes will be combined into one
+configuration update:
 
 ```javascript
 element.startBatchUpdate()

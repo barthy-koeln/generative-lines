@@ -3,10 +3,9 @@ import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
 
-export type ConfigChangeCallback = (update: Partial<Config>, config: Config) => void
-
 export interface StateControllerParams {
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D
 }
 
 /**
@@ -14,44 +13,77 @@ export interface StateControllerParams {
  * Handles initialization, updates, and line regeneration.
  */
 export function createStateController ({
-  canvas
+  canvas,
+  context
 }: StateControllerParams) {
   let config: Config
   let state: RenderState
-  const configChangeListeners: Set<ConfigChangeCallback> = new Set()
+  const resizeObserver: ResizeObserver = new ResizeObserver(onResize)
 
-  function resizeCanvas (): void {
-    canvas.width = config.renderWidth
-    canvas.height = config.renderHeight
+  function onResize (entries: ResizeObserverEntry[]) {
+    for (const { target } of entries) {
+      if (target !== canvas) {
+        continue
+      }
+
+      resizeCanvas()
+      return
+    }
   }
 
-  function notifyConfigChange (update: Partial<Config>, config: Config): void {
-    for (const listener of configChangeListeners) {
-      listener(update, config)
+  function resizeCanvas (): void {
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = Math.floor(canvas.offsetWidth * dpr)
+    canvas.height = Math.floor(canvas.offsetHeight * dpr)
+    context.scale(window.devicePixelRatio, window.devicePixelRatio)
+    mergeState({
+      size: {
+        x: canvas.offsetWidth,
+        y: canvas.offsetHeight
+      },
+    })
+  }
+
+  function notifyConfigChange (update: Partial<Config>): void {
+    if (!state.isInitialized) {
+      return
     }
+
+    canvas.dispatchEvent(new CustomEvent('lines-canvas:config-changed', { detail: { update, config } }))
+  }
+
+  function notifyStateChange (update: Partial<RenderState>): void {
+    if (!state.isInitialized) {
+      return
+    }
+
+    canvas.dispatchEvent(new CustomEvent('lines-canvas:state-changed', { detail: { update, state } }))
   }
 
   function initialize (partialConfig: Partial<Config>, incomingState?: Partial<RenderState>): void {
+    if (state?.isInitialized) {
+      return
+    }
+
     config = { ...DEFAULT_CONFIG, ...partialConfig }
+    state = { ...(state ?? {}), ...incomingState }
+
     resizeCanvas()
+    resizeObserver.observe(canvas)
 
-    const newState: RenderState = {
-      ...(state ?? {}),
-      ...incomingState
+    if (!state.steps) {
+      state.steps = fillArray(config.steps, getRandomFloat)
     }
 
-    if (!newState.steps) {
-      newState.steps = fillArray(config.steps, getRandomFloat)
+    if (!state.colors) {
+      state.colors = fillArray(config.colors, getRandomColor)
     }
 
-    if (!newState.colors) {
-      newState.colors = fillArray(config.colors, getRandomColor)
-    }
+    state.lines = createLines(config, state)
+    state.isInitialized = true
 
-    newState.lines = createLines(config, newState)
-    state = newState as RenderState
-
-    notifyConfigChange(config, config)
+    notifyConfigChange(config)
+    notifyStateChange(state)
   }
 
   function mergeConfig (update: Partial<Config>): void {
@@ -60,11 +92,7 @@ export function createStateController ({
       ...update,
     }
 
-    notifyConfigChange(update, config)
-  }
-
-  function rebuildLines (): void {
-    state.lines = createLines(config, state)
+    notifyConfigChange(update)
   }
 
   function mergeState (newState: Partial<RenderState>): void {
@@ -73,27 +101,39 @@ export function createStateController ({
       ...newState,
     }
 
-    config.colors = state.colors.length
-    config.steps = state.steps.length
+    const newColorCount = newState.colors?.length ?? 0
+    const newStepsCount = newState.steps?.length ?? 0
+    const update: Partial<Config> = {}
+    if (newColorCount && config.colors !== newColorCount) {
+      update.colors = newColorCount
+    }
+    if (newStepsCount && config.steps !== newStepsCount) {
+      update.steps = newStepsCount
+    }
 
-    rebuildLines()
+    if (Object.keys(update).length) {
+      mergeConfig(update)
+    }
+
+    notifyStateChange(newState)
+  }
+
+  function rebuildLines (): void {
+    mergeState({
+      lines: createLines(config, state)
+    })
   }
 
   function rerollLines (): void {
-    state.steps = fillArray(config.steps, getRandomFloat)
+    mergeState({
+      steps: fillArray(config.steps, getRandomFloat)
+    })
   }
 
   function rerollColors (): void {
-    state.colors = fillArray(config.colors, getRandomColor)
-  }
-
-  function addConfigChangeListener (callback: ConfigChangeCallback): () => void {
-    configChangeListeners.add(callback)
-    return () => configChangeListeners.delete(callback)
-  }
-
-  function removeConfigChangeListener (callback: ConfigChangeCallback): void {
-    configChangeListeners.delete(callback)
+    mergeState({
+      colors: fillArray(config.colors, getRandomColor)
+    })
   }
 
   function getConfig (): Config {
@@ -105,8 +145,6 @@ export function createStateController ({
   }
 
   return {
-    addConfigChangeListener,
-    removeConfigChangeListener,
     getConfig,
     getState,
     initialize,
@@ -115,6 +153,5 @@ export function createStateController ({
     rerollLines,
     rerollColors,
     rebuildLines,
-    resizeCanvas,
   }
 }

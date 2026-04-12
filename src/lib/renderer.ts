@@ -3,6 +3,10 @@ import { createDrawingController } from './renderer/drawing.ts'
 import { createStateController } from './renderer/state.ts'
 import type { RenderState } from './config.ts'
 
+const REBUILD_PROPERTIES = ['distance', 'amplitude', 'thickness', 'lines', 'paddingX', 'paddingY', 'perspective', 'easing']
+const RESTYLE_PROPERTIES = ['background', 'thickness', 'lineCap', 'lineJoin']
+const ANIMATION_PROPERTIES = ['animationDuration', 'animationEasing']
+
 export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
   const {
     initialize,
@@ -12,12 +16,10 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     mergeState,
     rerollLines,
     rerollColors,
-    rebuildLines,
-    resizeCanvas,
-    addConfigChangeListener,
-    removeConfigChangeListener
+    rebuildLines
   } = createStateController({
-    canvas
+    canvas,
+    context
   })
 
   const {
@@ -39,6 +41,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateBackOut,
     animateWipeOut,
     animateLoop,
+    createTween,
     replaceTweens,
     updateAnimation,
   } = createAnimationController({
@@ -47,10 +50,11 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     drawSegment
   })
 
-  addConfigChangeListener((update) => {
+  canvas.addEventListener('lines-canvas:config-changed', event => {
+    const { update } = event.detail
+
     let needsRebuild = false
     let needsRestyle = false
-    let needsResize = false
     let needsAnimationUpdate = false
     for (const [key, value] of Object.entries(update)) {
       if (value === undefined) {
@@ -58,39 +62,64 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
       }
 
       if (key == 'colors') {
-        needsRestyle = true
         rerollColors()
         continue
       }
 
       if (key == 'steps') {
-        needsRebuild = true
         rerollLines()
         continue
       }
 
-      if (['renderWidth', 'renderHeight'].includes(key)) {
-        needsResize = true
-      }
-
-      if (['distance', 'amplitude', 'thickness', 'lines', 'paddingX', 'paddingY', 'perspective', 'easing'].includes(key)) {
+      if (REBUILD_PROPERTIES.includes(key)) {
         needsRebuild = true
       }
 
-      if (['background', 'thickness', 'lineCap', 'lineJoin'].includes(key)) {
+      if (RESTYLE_PROPERTIES.includes(key)) {
         needsRestyle = true
       }
 
-      if (['animationDuration', 'animationEasing'].includes(key)) {
+      if (ANIMATION_PROPERTIES.includes(key)) {
         // No need to trigger a full redraw for animation config changes
         needsAnimationUpdate = true
       }
     }
 
-    if (needsResize) {
-      resizeCanvas()
-      // resize resets context
-      needsRestyle = true
+    applyUpdate(needsRestyle, needsRebuild, needsAnimationUpdate)
+  })
+
+  canvas.addEventListener('lines-canvas:state-changed', event => {
+    const { update } = event.detail
+
+    let needsRebuild = false
+    let needsRestyle = false
+    let needsAnimationUpdate = false
+    for (const [key, value] of Object.entries(update)) {
+      if (value === undefined) {
+        continue
+      }
+
+      if (key == 'size') {
+        needsRebuild = true
+        needsRestyle = true
+        needsAnimationUpdate = true
+      }
+
+      if (key == 'colors') {
+        needsRestyle = true
+      }
+
+      if (key == 'steps') {
+        needsRebuild = true
+      }
+    }
+
+    applyUpdate(needsRestyle, needsRebuild, needsAnimationUpdate)
+  })
+
+  function applyUpdate (needsRestyle: boolean, needsRebuild: boolean, needsAnimationUpdate: boolean) {
+    if (!needsRestyle && !needsRebuild && !needsAnimationUpdate) {
+      return
     }
 
     if (needsRestyle) {
@@ -107,7 +136,7 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
 
     clearCanvas()
     drawSegment(...getCurrentSegment())
-  })
+  }
 
   return {
     get config () {
@@ -137,9 +166,8 @@ export function useRenderer (canvas: HTMLCanvasElement, context: CanvasRendering
     animateBackOut,
     animateWipeOut,
     animateLoop,
+    createTween,
     replaceTweens,
-    addConfigChangeListener,
-    removeConfigChangeListener
   }
 }
 

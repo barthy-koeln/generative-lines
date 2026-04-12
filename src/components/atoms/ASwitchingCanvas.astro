@@ -20,8 +20,6 @@
 
   const renderer = useRenderer(canvasElement, context)
   renderer.initialize({
-    renderWidth: canvasElement.offsetWidth,
-    renderHeight: canvasElement.offsetHeight,
     steps: 12,
     colors: 3,
     distance: 12,
@@ -39,22 +37,25 @@
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
-  // noinspection InfiniteRecursionJS
-  async function infiniteLoop () {
-    await renderer.animateIn()
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    await renderer.animateWipeOut()
-    await new Promise(resolve => setTimeout(resolve, 500))
+  const [
+    tweenIn,
+    tweenOut,
+    tweenInFollow
+  ] = renderer.animateLoop(
+    1000,
+    500,
+    { from: [0, 0], to: [0, 1] },
+    { from: [0, 1], to: [1, 1] }
+  )
+
+  tweenOut.onComplete(() => {
     renderer.rerollColors()
     renderer.mergeConfig({
       steps: randomInt(8, 64),
       distance: randomInt(2, 24),
       amplitude: randomInt(8, 32),
     })
-    return infiniteLoop()
-  }
-
-  infiniteLoop()
+  })
 </script>
 
 <style>

@@ -41,18 +41,17 @@ export class LinesCanvas extends HTMLElement {
   connectedCallback () {
     this.renderer.initialize(
       parseAllConfigAttributes(this, {
-        ...DEFAULT_CONFIG,
-        renderWidth: this.offsetWidth,
-        renderHeight: this.offsetHeight
+        ...DEFAULT_CONFIG
       }),
       parseAllStateAttributes(this)
     )
 
-    this.renderer.addConfigChangeListener((update) => {
+    this.canvas.addEventListener('lines-canvas:config-changed', (event) => {
       if (this.isSyncingAttributes) {
         return
       }
 
+      const { update } = event.detail
       this.requestSync(update)
     })
 
@@ -107,10 +106,8 @@ export class LinesCanvas extends HTMLElement {
 
   public endBatchUpdate () {
     this.isBatchUpdating = false
-    this.renderer.initialize(parseAllConfigAttributes(this, {
-      ...DEFAULT_CONFIG,
-      renderWidth: this.offsetWidth,
-      renderHeight: this.offsetHeight
+    this.renderer.mergeConfig(parseAllConfigAttributes(this, {
+      ...DEFAULT_CONFIG
     }))
   }
 
