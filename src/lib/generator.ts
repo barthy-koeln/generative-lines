@@ -32,19 +32,6 @@ function clamp (x: number, y: number, z: number) {
   return Math.max(x, Math.min(y, z))
 }
 
-function getScale (perspective: number, lineIndex: number, lineCount: number): number {
-  const min = 1 / lineCount
-  if (perspective == 0) {
-    return 1
-  }
-
-  if (perspective > 0) {
-    return clamp(min, 1.0, 1 - lineIndex * perspective)
-  }
-
-  return clamp(min, 1.0, 1 - (lineCount - lineIndex) * perspective * -1)
-}
-
 /**
  * Generate lines based on the provided configuration and render state.
  * First generates base points for each line, then applies perspective scaling and easing to create the final renderable lines.
@@ -88,17 +75,40 @@ export function createLines (
    */
   const offsetX = config.paddingX + (innerWidth - pixelsPerStep * (state.steps.length - 1)) / 2
 
+  const centerX = state.size.x / 2
+  const centerY = state.size.y / 2
+  const cosPerspective = Math.cos(config.perspective)
+  const sinPerspective = Math.sin(config.perspective)
+
+  const getScale = (lineIndex: number) => {
+    const pyBase = centerOffset + config.paddingY + lineIndex * config.distance
+    const dyBase = pyBase - centerY
+    const dz = dyBase * sinPerspective
+    return 1 - (dz / innerHeight)
+  }
+
+  const maxScale = Math.max(getScale(0), getScale(config.lines - 1)) || 1
+
   for (let lineIndex = 0; lineIndex < config.lines; lineIndex++) {
-    const offsetY = centerOffset + config.paddingY + lineIndex * config.distance
-    const offsetPoints: Line = baseLine.map(([x, y]) => [
-      offsetX + x,
-      offsetY + y,
-    ])
+    const pyBase = centerOffset + config.paddingY + lineIndex * config.distance
+    const dyBase = pyBase - centerY
+    const dz = dyBase * sinPerspective
+    const scale = (1 - (dz / innerHeight)) / maxScale
+    const dyProj = dyBase * cosPerspective
+
+    const offsetPoints: Line = baseLine.map(([x, y]) => {
+      const dx = offsetX + x - centerX
+
+      return [
+        centerX + dx * scale,
+        centerY + dyProj + y * scale,
+      ]
+    })
 
     lines.push(
       getEasedCurvePoints(
         offsetPoints,
-        config.easing,
+        config.easing
       ),
     )
   }

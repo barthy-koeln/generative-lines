@@ -48,6 +48,11 @@ export type Milliseconds = number
 export type Normalized = number
 
 /**
+ * Normalized value between -PI and PI
+ */
+export type Radians = number
+
+/**
  * Any parseable CSS color string (e.g. hex, rgb, hsl, color names)
  */
 export type CSSColor = string

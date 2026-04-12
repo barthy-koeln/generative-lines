@@ -3,7 +3,7 @@ export interface Props {
   id?: string
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
-  class: string
+  class?: string
 }
 
 const { type, disabled, id, class: className } = Astro.props

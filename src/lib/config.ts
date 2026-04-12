@@ -1,5 +1,5 @@
 import { Easing } from '@tweenjs/tween.js'
-import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels } from './types'
+import type { CSSColor, EasingFunction, Integer, Line, Milliseconds, Normalized, Pixels, Radians } from './types'
 import { AutoplayTweenGroup, getTweenGroup } from './autoplay-tween-group.ts'
 
 export interface Config {
@@ -9,7 +9,7 @@ export interface Config {
   lines: Integer
   paddingX: Pixels
   paddingY: Pixels
-  perspective: Normalized
+  perspective: Radians
   steps: Integer
   colors: Integer
   easing: EasingFunction
@@ -63,7 +63,7 @@ export const DEFAULT_CONFIG: Config = {
   lines: 12,
   paddingX: 20,
   paddingY: 20,
-  perspective: -0.02,
+  perspective: -Math.PI / 8,
   steps: 12,
   colors: 3,
   easing: getEasingByString('Cubic.InOut'),

@@ -62,7 +62,7 @@ import AButton from '../components/atoms/AButton.astro'
   }
   linesCanvas.endBatchUpdate()
 
-  linesCanvas.renderer.animateLoop()
+  linesCanvas.renderer.animateIn()
 
   if (!downloadButton) {
     throw new Error('Download button or lines canvas not found')
