@@ -76,12 +76,12 @@
       return
     }
 
-    timeProgress += delta * (isThinking.value ? 8 : 1)
+    timeProgress += delta * (isThinking.value ? 4 : 1)
     if (timeProgress > duration) {
       timeProgress -= duration
     }
 
-    thickness = moveToward(thickness, isThinking.value ? 4 : 1, delta, 250)
+    thickness = moveToward(thickness, isThinking.value ? 4 : 2, delta, 250)
     progress = Math.cos((timeProgress / duration) * Math.PI * 2)
     distance = moveToward(distance, 4 + ((isThinking.value ? 16 : 4) * (progress + 1)), delta, 250)
     renderer.mergeConfig({
@@ -183,6 +183,7 @@
     text-align: center;
     min-height: 2lh;
     max-width: 80%;
+    font-size: var(--fontsize-3);
   }
 
   [data-is-thinking="true"] p {

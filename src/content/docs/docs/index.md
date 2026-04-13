@@ -19,11 +19,16 @@ customElements.define('lines-canvas', LinesCanvas)
 ```
 
 ```html
-<lines-canvas lines="10" colors="5"></lines-canvas>
+
+<lines-canvas
+  lines="10"
+  colors="5"
+/>
 ```
 
 ## Links
 
 - [Playground](/) — Interactive playground for testing configurations.
-- [Demo](/demo) — Scroll-through demos showcasing different configurations and styles.
+- [Demo: Scrolling](/demo) — Scroll-through demos showcasing different configurations and styles.
+- [Demo: Agentic Chat](/agent) — Agentic chat "thinking" animation demo
 - [Source Code](https://github.com/barthy-koeln/generative-lines) — View the full source code on GitHub.

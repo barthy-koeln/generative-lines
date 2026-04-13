@@ -5,6 +5,7 @@ import '@fontsource/ubuntu/latin-700.css'
 import OLineCanvasForm from '../components/organisms/OLineCanvasForm.astro'
 import Layout from '../layouts/Layout.astro'
 import AButton from '../components/atoms/AButton.astro'
+import MDemoLinks from '../components/molecules/MDemoLinks.astro'
 ---
 
 <Layout>
@@ -12,7 +13,7 @@ import AButton from '../components/atoms/AButton.astro'
 
   <p>Beautiful lightweight animations, usable as loading throbbers or scroll-in animations.</p>
 
-  <p><a href="/demo">Scroll Animation Demo</a> | <a href="/docs">Use it as a library</a></p>
+  <MDemoLinks current="playground"/>
 
   <hr>
 
@@ -21,11 +22,14 @@ import AButton from '../components/atoms/AButton.astro'
       class="demo"
       autoplay="false"
     />
+
+    <div>
+      <AButton id="download-button">Download</AButton>
+      <AButton id="animation-button">Replay animation</AButton>
+    </div>
   </OLineCanvasForm>
 
   <hr>
-
-  <AButton id="download-button">Download</AButton>
 
   <p>All downloads of “Generative Lines” by <a
     href="https://github.com/barthy-koeln"
@@ -45,6 +49,7 @@ import AButton from '../components/atoms/AButton.astro'
   customElements.define('lines-canvas', LinesCanvas)
 
   const downloadButton = document.querySelector<HTMLButtonElement>('#download-button')
+  const animationButton = document.querySelector<HTMLButtonElement>('#animation-button')
   const linesCanvas = document.querySelector<LinesCanvas>('lines-canvas')
   if (!linesCanvas) {
     throw new Error('LinesCanvas element not found')
@@ -70,6 +75,15 @@ import AButton from '../components/atoms/AButton.astro'
 
   downloadButton.addEventListener('click', () => {
     download(linesCanvas)
+  })
+
+  if (!animationButton) {
+    throw new Error('Animation animation not found')
+  }
+
+  animationButton.addEventListener('click', async () => {
+    await linesCanvas.renderer.animateWipeOut()
+    await linesCanvas.renderer.animateIn()
   })
 </script>
 

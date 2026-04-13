@@ -1,0 +1,52 @@
+---
+const links = {
+  playground: {
+    label: 'Playground',
+    href: '/',
+  },
+  library: {
+    label: 'Library',
+    href: '/docs',
+  },
+  scrollDemo: {
+    label: 'Scroll demo',
+    href: '/demo',
+  },
+  agentDemo: {
+    label: 'Agent demo',
+    href: '/agent',
+  }
+}
+
+export interface Props {
+  current: keyof typeof links;
+}
+
+const { current } = Astro.props
+---
+
+
+<p>
+  {Object.entries(links).map(([key, value], index, items) => {
+    return (
+      <>
+        <a
+          href={value.href}
+          id={key}
+          aria-current={current === key ? 'true' : 'false'}
+        >{value.label}</a>
+        {index < (items.length - 1) && (<span>|</span>)}
+      </>
+    )
+  })}
+</p>
+
+<style>
+  a {
+    padding: var(--spacer-sm);
+  }
+
+  a[aria-current="true"] {
+    color: var(--color-accent)
+  }
+</style>

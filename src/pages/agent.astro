@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro'
 import AThinkingCanvas from '../components/atoms/AThinkingCanvas.astro'
 import AChatInput from '../components/atoms/AChatInput.astro'
+import MDemoLinks from '../components/molecules/MDemoLinks.astro'
 ---
 
 <Layout dark>
@@ -12,6 +13,8 @@ import AChatInput from '../components/atoms/AChatInput.astro'
       <AChatInput id="chat-form"/>
     </div>
   </div>
+
+  <MDemoLinks current="agentDemo"/>
 </Layout>
 
 <script>
@@ -72,7 +75,7 @@ import AChatInput from '../components/atoms/AChatInput.astro'
 
       form.removeAttribute('data-processing')
       isProcessing = false
-    }, 3000)
+    }, 6_000)
   }
 
   if (!form) {

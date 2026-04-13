@@ -77,13 +77,21 @@ export function createLines (
 
   const centerX = state.size.x / 2
   const centerY = state.size.y / 2
+  // Pre-calculate trigonometric values for the perspective angle (theta).
+  // This simulates a 3D rotation around the X-axis (the horizontal line through centerY).
+  // cos(theta) = adjacent / hypotenuse: Used to find the projected Y position on the screen.
+  // sin(theta) = opposite / hypotenuse: Used to find the depth (Z distance) from the viewer.
   const cosPerspective = Math.cos(config.perspective)
   const sinPerspective = Math.sin(config.perspective)
 
   const getScale = (lineIndex: number) => {
     const pyBase = centerOffset + config.paddingY + lineIndex * config.distance
     const dyBase = pyBase - centerY
+    // The distance from the center (dyBase) acts as the hypotenuse of a right triangle.
+    // The opposite side (dz) represents the depth into the screen: dz = hypotenuse * sin(theta).
     const dz = dyBase * sinPerspective
+    // Perspective scaling: As depth (dz) increases, the object appears smaller.
+    // innerHeight is used as a reference distance to normalize the scaling effect.
     return 1 - (dz / innerHeight)
   }
 

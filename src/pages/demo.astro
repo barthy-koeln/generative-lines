@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import MDemoLinks from '../components/molecules/MDemoLinks.astro'
 ---
 
 <Layout dark>
@@ -7,7 +8,7 @@ import Layout from '../layouts/Layout.astro'
 
   <p>Procedural line art that responds to your scroll (don't read the text)</p>
 
-  <p><a href="/">Playground</a> | <a href="/docs">Use it as a library</a></p>
+  <MDemoLinks current="scrollDemo"/>
 
   <hr>
 
@@ -20,7 +21,7 @@ import Layout from '../layouts/Layout.astro'
       animation-easing="Cubic.Out"
       distance="8"
       amplitude="96"
-      perspective="0.02"
+      perspective={Math.PI * 0.5}
       padding-x="0"
       padding-y="0"
       autoplay="false"
@@ -41,7 +42,7 @@ import Layout from '../layouts/Layout.astro'
       animation-easing="Quadratic.Out"
       distance="4"
       amplitude="32"
-      perspective="0.01"
+      perspective={Math.PI * 0.1}
       padding-x="0"
       padding-y="0"
       autoplay="false"
@@ -80,7 +81,7 @@ import Layout from '../layouts/Layout.astro'
       animation-easing="Bounce.Out"
       distance="6"
       amplitude="16"
-      perspective="0.01"
+      perspective={Math.PI}
       padding-x="0"
       padding-y="0"
       autoplay="false"
@@ -101,7 +102,7 @@ import Layout from '../layouts/Layout.astro'
       amplitude="64"
       padding-x="0"
       padding-y="0"
-      perspective="0.015"
+      perspective={Math.PI * 0.25}
       autoplay="false"
       tween-group="demo"
     />
@@ -140,7 +141,7 @@ import Layout from '../layouts/Layout.astro'
       amplitude="18"
       padding-x="0"
       padding-y="0"
-      perspective="0.025"
+      perspective={Math.PI}
       autoplay="false"
       tween-group="demo"
     />
@@ -150,14 +151,14 @@ import Layout from '../layouts/Layout.astro'
     <lines-canvas
       animation-duration="4000"
       steps="20"
-      lines="64"
+      lines="32"
       colors="10"
       thickness="1"
       easing="Quadratic.InOut"
       animation-easing="Quadratic.InOut"
-      distance="1"
+      distance="4"
       amplitude="64"
-      perspective="0.01"
+      perspective={Math.PI * -0.2}
       autoplay="false"
       tween-group="demo"
     />
@@ -237,7 +238,10 @@ import Layout from '../layouts/Layout.astro'
   }
 
   function animate ({ progress }: { progress: number }) {
-    firstCanvas!.renderer.mergeConfig({ distance: 8 * progress })
+    firstCanvas!.renderer.mergeConfig({
+      distance: 16 - (2 * progress),
+      perspective: (Math.PI * 0.5) + Math.PI * 0.05 * progress
+    })
   }
 
   firstCanvas.renderer.animateIn().then(() => {
@@ -283,7 +287,7 @@ import Layout from '../layouts/Layout.astro'
   }
 
   .intro {
-    min-height: 50vh;
+    height: 70vh;
   }
 
   .finale {
