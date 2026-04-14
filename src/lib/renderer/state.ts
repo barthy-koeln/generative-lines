@@ -2,6 +2,7 @@ import { type Config, DEFAULT_CONFIG, type RenderState } from '../config.ts'
 import { createLines } from '../generator.ts'
 import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
+import { diff } from '../utils/diff.ts'
 
 export interface StateControllerParams {
   canvas: HTMLCanvasElement,
@@ -45,7 +46,7 @@ export function createStateController ({
   }
 
   function notifyConfigChange (update: Partial<Config>): void {
-    if (!state.isInitialized) {
+    if (!state?.isInitialized) {
       return
     }
 
@@ -53,7 +54,7 @@ export function createStateController ({
   }
 
   function notifyStateChange (update: Partial<RenderState>): void {
-    if (!state.isInitialized) {
+    if (!state?.isInitialized) {
       return
     }
 
@@ -65,7 +66,9 @@ export function createStateController ({
       return
     }
 
-    config = { ...DEFAULT_CONFIG, ...partialConfig }
+    config = { ...DEFAULT_CONFIG }
+    mergeConfig(diff(config, partialConfig))
+
     state = { ...(state ?? {}), ...incomingState }
 
     resizeCanvas()
@@ -79,11 +82,10 @@ export function createStateController ({
       state.colors = fillArray(config.colors, getRandomColor)
     }
 
-    state.lines = createLines(config, state)
     state.isInitialized = true
+    state.lines = createLines(config, state)
 
-    notifyConfigChange(config)
-    notifyStateChange(state)
+    mergeState(state)
   }
 
   function mergeConfig (update: Partial<Config>): void {
@@ -105,6 +107,7 @@ export function createStateController ({
     const newStepsCount = newState.steps?.length ?? 0
     const update: Partial<Config> = {}
     if (newColorCount && config.colors !== newColorCount) {
+      console.trace('update colors count from state update')
       update.colors = newColorCount
     }
     if (newStepsCount && config.steps !== newStepsCount) {
