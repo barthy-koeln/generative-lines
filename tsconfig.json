@@ -14,7 +14,11 @@
       "ESNext"
     ],
     "types": [
-      "astro/client"
-    ]
+      "astro/client",
+      "jest"
+    ],
+    "ignoreDeprecations": "6.0",
+    "isolatedModules": true,
+    "rootDir": "./"
   }
 }

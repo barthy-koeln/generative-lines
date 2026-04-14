@@ -14,6 +14,10 @@ export function useCachedGradient () {
       return currentGradient
     }
 
+    if (colors.length < 2) {
+      throw new Error('Gradient requires at least two colors')
+    }
+
     const colorDistance = 1 / (colors.length - 1)
     const gradient = context.createLinearGradient(start, 0, width, 0)
 
