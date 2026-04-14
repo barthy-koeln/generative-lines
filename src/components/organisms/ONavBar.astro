@@ -1,4 +1,15 @@
-<nav class="ONavBar">
+---
+export interface Props {
+  align?: 'start' | 'center'
+}
+
+const { align = 'start' } = Astro.props
+---
+
+<nav
+  class="ONavBar"
+  data-align={align}
+>
   <a href="/">
     <img
       alt="barthy.koeln stylized logo in typical dark theme coding environment colors"
@@ -25,7 +36,9 @@
     padding: 2rem;
 
     @include desktop {
-      flex-direction: row;
+      [data-align="start"] {
+        flex-direction: row;
+      }
     }
 
     @media print {

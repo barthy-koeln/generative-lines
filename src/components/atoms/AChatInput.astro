@@ -42,9 +42,12 @@ const {
   @use "../../variables" as *;
 
   .AChatInput {
-    width: 100%;
+    width: calc(100% - var(--spacer-md));
     max-width: 600px;
-    position: relative;
+    position: fixed;
+    bottom: var(--spacer);
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .AChatInput__field {

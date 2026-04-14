@@ -1,22 +1,43 @@
 ---
-import Layout from '../layouts/Layout.astro'
+import '../root.scss'
+import '../demo.scss'
+import '@fontsource/ubuntu/latin-400.css'
+import '@fontsource/ubuntu/latin-700.css'
 import AThinkingCanvas from '../components/atoms/AThinkingCanvas.astro'
 import AChatInput from '../components/atoms/AChatInput.astro'
+import ONavbar from '../components/organisms/ONavBar.astro'
 import MDemoLinks from '../components/molecules/MDemoLinks.astro'
 ---
 
-<Layout dark>
-  <div class="AgentThinking">
-    <AThinkingCanvas/>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="/favicon.svg"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width"
+  />
+  <meta
+    name="generator"
+    content={Astro.generator}
+  />
+  <title>Generative Lines</title>
+</head>
+<body>
+<div class="AgentThinking">
+  <ONavbar/>
 
-    <div class="AgentThinking__input-container">
-      <AChatInput id="chat-form"/>
-    </div>
+  <AThinkingCanvas/>
+
+  <div class="AgentThinking__input-container">
+    <AChatInput id="chat-form"/>
   </div>
-
-  <MDemoLinks current="agentDemo"/>
-</Layout>
-
+</div>
+</body>
 <script>
   const MOCK_RESPONSES = [
     'That\'s an interesting perspective. Let me think about that for a moment...',
@@ -88,6 +109,15 @@ import MDemoLinks from '../components/molecules/MDemoLinks.astro'
 <style lang="scss">
   @use "../variables" as *;
 
+  body {
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+
+  .ONavbar {
+    flex-direction: column;
+  }
+
   .AgentThinking {
     display: flex;
     flex-direction: column;
@@ -95,7 +125,9 @@ import MDemoLinks from '../components/molecules/MDemoLinks.astro'
     gap: var(--spacer-lg);
     width: 100%;
     max-width: 800px;
-    min-height: 100vh;
+    height: 100vh;
+    margin: auto;
+    overflow: hidden;
   }
 
   h1 {
@@ -117,16 +149,5 @@ import MDemoLinks from '../components/molecules/MDemoLinks.astro'
     width: 100%;
     display: flex;
     justify-content: center;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 </style>
