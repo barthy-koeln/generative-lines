@@ -4,6 +4,13 @@ import { fillArray } from '../utils/array.ts'
 import { getRandomColor, getRandomFloat } from '../utils/randomness.ts'
 import { diff } from '../utils/diff.ts'
 
+declare global {
+  interface HTMLElementEventMap {
+    'lines-canvas:config-changed': CustomEvent<{ update: Partial<Config>, config: Config }>;
+    'lines-canvas:state-changed': CustomEvent<{ update: Partial<RenderState>, state: RenderState }>;
+  }
+}
+
 export interface StateControllerParams {
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D
